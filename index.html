@@ -1,1 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Love!</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background: linear-gradient(-45deg, #ff9a9e, #fecfef, #fe9a8b, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
 
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating background hearts */
+        .bg-heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 77, 109, 0.4);
+            animation: floatBackground 6s infinite linear;
+            bottom: -50px;
+            z-index: 1;
+            user-select: none;
+        }
+
+        @keyframes floatBackground {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-105vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.75);
+            padding: 35px 25px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(230, 100, 150, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 88%;
+            max-width: 420px;
+            z-index: 10;
+            position: relative;
+            animation: cardPop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes cardPop {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            color: #d12771;
+            font-size: 2.4rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.6);
+            animation: pulseText 2s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+
+        .love-note {
+            font-size: 1.15rem;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .music-btn {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .music-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.6);
+        }
+
+        /* 3D Birthday Cake */
+        .cake {
+            position: relative;
+            width: 140px;
+            height: 100px;
+            background: #ffb3c1;
+            margin: 30px auto;
+            border-radius: 14px 14px 0 0;
+            box-shadow: inset 0 6px 0 #ff8da1, 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .cake::before {
+            content: "";
+            position: absolute;
+            top: 35px; left: 0;
+            width: 140px; height: 15px;
+            background: #fff0f3;
+        }
+
+        .candle {
+            position: absolute;
+            top: -25px; left: 63px;
+            width: 14px; height: 25px;
+            background: linear-gradient(to right, #a2d2ff, #bde0fe);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .flame {
+            position: absolute;
+            top: -15px; left: 3px;
+            width: 8px; height: 16px;
+            background: #ff9d00;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 0 12px #ff9d00, 0 0 20px #ff0000;
+            animation: flicker 0.5s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-1deg); }
+            100% { transform: scale(1.15) rotate(2deg); }
+        }
+
+        .wish-instruction {
+            color: #c91863;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hidden background music player -->
+    <iframe id="musicPlayer" style="display:none;" src="https://youtube.com" allow="autoplay"></iframe>
+
+    <div class="container">
+        <h1>Happy Birthday, My Love! ❤️</h1>
+        
+        <button class="music-btn" id="playBtn" onclick="startMagicalExperience()">
+            🎵 Tap to Unlock Magic 🎵
+        </button>
+
+        <p class="love-note">
+            "Sometimes, all I think about is you... late nights in the middle of June. You hold the key to my universe, and I hope this special day brings you endless waves of happiness!"
+        </p>
+        
+        <div class="cake">
+            <div class="candle">
+                <div class="flame" id="flame" onclick="blowCandle()"></div>
+            </div>
+        </div>
+        <p class="wish-instruction" id="cake-instruction">Make a wish & tap the flame to blow it out!</p>
+    </div>
+
+    <script>
+        // Automatic background heart generation
+        function createBackgroundHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerHTML = ['❤️', '💖', '💝', '✨'][Math.floor(Math.random() * 4)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 16) + 'px';
+                document.body.appendChild(heart);
+
+                setTimeout(() => { heart.remove(); }, 7000);
+            }, 400);
+        }
+
+        // Active background music trigger on mobile interactions
+        function startMagicalExperience() {
+            const player = document.getElementById('musicPlayer');
+            // Sends direct postMessage command to force the YouTube API frame to play
+            player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            document.getElementById('playBtn').innerHTML = "✨ Playing Our Song ✨";
+            document.getElementById('playBtn').style.background = "#2ec4b6";
+        }
+
+        function blowCandle() {
+            document.getElementById('flame').style.display = 'none';
+            document.getElementById('cake-instruction').innerHTML = "✨ Wish sent to the stars! I love you infinitely! ✨";
+            
+            // Generate dense burst of love hearts
+            for(let i=0; i<40; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('bg-heart');
+                    heart.innerHTML = '❤️';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                    heart.style.color = '#ff0050';
+                    document.body.appendChild(heart);
+                }, i * 100);
+            }
+        }
+
+        // Initialize background effects right away
+        window.onload = createBackgroundHearts;
+    </script>
+</body>
+</html>
