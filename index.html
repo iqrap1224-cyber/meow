@@ -1,91 +1,504 @@
-<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  <title>Happy Birthday, My Love! </title>  <!-- Canvas Confetti Library -->  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  <style>    :root {      --bg-gradient: linear-gradient(135deg, #1a1c20 0%, #0f1016 100%);      --accent-color: #ff3366;      --gold: #ffd700;      --pink: #ff85a1;      --card-bg: rgba(255, 255, 255, 0.05);      --glass-border: rgba(255, 255, 255, 0.18);    }
-    * {      box-sizing: border-box;      margin: 0;      padding: 0;    }
-    body {      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;      background: var(--bg-gradient);      color: #ffffff;      min-height: 100vh;      display: flex;      flex-direction: column;      justify-content: center;      align-items: center;      overflow-x: hidden;      padding: 20px 10px;    }
-    .container {      position: relative;      z-index: 1;      max-width: 500px;      width: 100%;      text-align: center;    }
-    /* 3D Flip Card Container */    .card-container {      perspective: 1000px;      width: 100%;      height: 380px;      margin-bottom: 25px;      cursor: pointer;    }
-    .card-inner {      position: relative;      width: 100%;      height: 100%;      text-align: center;      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);      transform-style: preserve-3d;    }
-    .card-container.flipped .card-inner {      transform: rotateY(180deg);    }
-    .card-front, .card-back {      position: absolute;      width: 100%;      height: 100%;      backface-visibility: hidden;      border-radius: 24px;      background: var(--card-bg);      backdrop-filter: blur(16px);      border: 1px solid var(--glass-border);      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);      display: flex;      flex-direction: column;      justify-content: center;      align-items: center;      padding: 30px;    }
-    .card-front h1 {      font-size: 2.5rem;      background: linear-gradient(45deg, #ff3366, #ff99ac, #ffd700);      -webkit-background-clip: text;      -webkit-text-fill-color: transparent;      margin-bottom: 15px;    }
-    .cake-icon {      font-size: 5rem;      margin: 20px 0;      animation: bounce 2s infinite;    }
-    .tap-hint {      font-size: 0.9rem;      color: #aaa;      margin-top: 15px;      border: 1px dashed rgba(255, 255, 255, 0.3);      padding: 6px 16px;      border-radius: 20px;    }
-    /* Card Back Styling */    .card-back {      transform: rotateY(180deg);      text-align: left;    }
-    .card-back h2 {      color: var(--gold);      font-size: 1.8rem;      margin-bottom: 15px;      align-self: center;    }
-    .card-back p {      font-size: 1.05rem;      line-height: 1.6;      color: #e2e8f0;      margin-bottom: 15px;    }
-    /* --- PLAYING SECTION LAYOUT --- */    .play-section {      display: flex;      flex-direction: column;      gap: 15px;      margin-bottom: 25px;    }
-    /* Generic Interactive Box */    .feature-box {      background: var(--card-bg);      border: 1px solid var(--glass-border);      border-radius: 18px;      padding: 18px;      backdrop-filter: blur(10px);      text-align: center;    }
-    .feature-title {      font-size: 0.95rem;      font-weight: bold;      color: var(--pink);      margin-bottom: 10px;    }
-    /* Element 1: Scratch Card */    .scratch-area {      position: relative;      width: 100%;      height: 80px;      border-radius: 12px;      overflow: hidden;      user-select: none;    }
-    .scratch-secret {      position: absolute;      top: 0;      left: 0;      width: 100%;      height: 100%;      background: rgba(255, 133, 161, 0.15);      display: flex;      align-items: center;      justify-content: center;      padding: 12px;      font-size: 0.95rem;      font-style: italic;      color: #ffe5ec;      border: 1px dashed var(--pink);      border-radius: 12px;      line-height: 1.4;    }
-    .scratch-canvas {      position: absolute;      top: 0;      left: 0;      width: 100%;      height: 100%;      cursor: pointer;      touch-action: none;    }
-    /* Buttons */    .btn-action {      background: linear-gradient(45deg, #ff758f, var(--accent-color));      border: none;      color: white;      padding: 10px 22px;      font-size: 0.95rem;      font-weight: bold;      border-radius: 30px;      cursor: pointer;      box-shadow: 0 4px 15px rgba(255, 75, 114, 0.4);      transition: transform 0.2s;    }
-    .btn-action:active {      transform: scale(0.95);    }
-    .note-display {      margin-top: 10px;      font-size: 0.95rem;      color: var(--gold);      min-height: 24px;      font-style: italic;      line-height: 1.4;      transition: opacity 0.3s ease;    }
-    /* Element 3: Candle Blowing */    .candle-svg {      font-size: 2.8rem;      cursor: pointer;      user-select: none;      display: inline-block;      transition: transform 0.3s;    }
-    /* Element 4: Love Dial */    .dial-slider {      width: 100%;      accent-color: var(--accent-color);      cursor: pointer;    }
-    /* Element 5: Reasons Slot */    .slot-display {      font-size: 1rem;      color: #fff;      margin-top: 8px;      font-weight: 500;    }
-    /* Element 6: Music Box */    .music-bar {      display: flex;      justify-content: center;      align-items: center;      gap: 12px;    }
-    /* Element 7: Wish Jar */    .wish-input {      width: 70%;      padding: 8px 12px;      border-radius: 20px;      border: 1px solid var(--glass-border);      background: rgba(255, 255, 255, 0.1);      color: #fff;      outline: none;    }
-    /* Element 8: Fortune Cookie */    .cookie-icon {      font-size: 2.2rem;      cursor: pointer;      transition: transform 0.2s;    }
-    .cookie-icon:hover {      transform: scale(1.1);    }
-    /* Element 9: Compliment Generator */    .compliment-box {      font-size: 0.95rem;      color: #ffe5ec;      margin-top: 8px;    }
-    /* Element 10: Kiss Counter */    .kiss-badge {      display: inline-block;      background: rgba(255, 51, 102, 0.3);      padding: 4px 12px;      border-radius: 12px;      font-size: 0.85rem;      color: #ff99ac;      margin-top: 6px;    }
-    /* Element 12: Hug Battery */    .battery-bar {      width: 100%;      height: 16px;      background: rgba(255, 255, 255, 0.1);      border-radius: 10px;      overflow: hidden;      margin-top: 10px;      border: 1px solid var(--glass-border);    }
-    .battery-fill {      width: 20%;      height: 100%;      background: linear-gradient(90deg, #ff758f, #ffd700);      transition: width 0.3s ease;    }
-    /* Interactive Confetti Button */    .btn-celebrate {      background: linear-gradient(45deg, var(--accent-color), #ff6b8b);      border: none;      color: white;      padding: 14px 32px;      font-size: 1.1rem;      font-weight: bold;      border-radius: 50px;      cursor: pointer;      box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);      transition: all 0.3s ease;      width: 100%;    }
-    .btn-celebrate:hover {      transform: scale(1.03);      box-shadow: 0 0 30px rgba(255, 51, 102, 0.9);    }
-    /* Countdown Styling */    .countdown-title {      font-size: 0.95rem;      color: #bbb;      margin-bottom: 10px;      letter-spacing: 1px;      text-transform: uppercase;    }
-    .timer-grid {      display: grid;      grid-template-columns: repeat(4, 1fr);      gap: 10px;    }
-    .timer-box {      background: rgba(255, 255, 255, 0.08);      border: 1px solid var(--glass-border);      border-radius: 12px;      padding: 12px 5px;    }
-    .timer-box span {      display: block;      font-size: 1.5rem;      font-weight: bold;      color: var(--gold);    }
-    .timer-box label {      font-size: 0.75rem;      color: #aaa;    }
-    @keyframes bounce {      0%, 100% { transform: translateY(0); }      50% { transform: translateY(-12px); }    }  </style></head><body>
-  <div class="container">
-    <!-- Interactive 3D Card -->    <div class="card-container" id="birthdayCard" onclick="toggleCard()">      <div class="card-inner">                <!-- Front Side -->        <div class="card-front">          <h1>Happy Birthday!</h1>          <div class="cake-icon"> </div>          <p>Wishing you an extraordinary day filled with endless joy and laughter!</p>          <div class="tap-hint"> Tap to open card </div>        </div>
-        <!-- Back Side -->        <div class="card-back">          <h2>Special Message </h2>          <p>May this year bring you closer to your dreams, surround you with love, and grant you unforgettable moments.</p>          <p>Keep shining brightly and being the incredible person you are!</p>          <p style="text-align: right; color: var(--gold); font-weight: bold;">— With Love </p>        </div>
-      </div>    </div>
-    <!-- 12 Cute Playing Elements with Love & Fun -->    <div class="play-section">            <!-- Element 1: Scratch Card -->      <div class="feature-box">        <div class="feature-title"> 1. Scratch off to reveal a secret love note!</div>        <div class="scratch-area" id="scratchContainer">          <div class="scratch-secret">            "Out of all the people in the world, my favorite place is right beside you! "          </div>          <canvas id="scratchCanvas" class="scratch-canvas"></canvas>        </div>      </div>
-      <!-- Element 2: Memory Capsule -->      <div class="feature-box">        <div class="feature-title"> 2. Memory Capsule</div>        <button class="btn-action" onclick="popMemory(event)">Unlock a Favorite Memory</button>        <div class="note-display" id="capsuleNote">Click to reveal a precious thought...</div>      </div>
-      <!-- Element 3: Blow Out the Candle -->      <div class="feature-box">        <div class="feature-title"> 3. Make a Wish & Blow Out the Flame</div>        <div class="candle-svg" id="candleElem" onclick="blowCandle()"> </div>        <div class="note-display" id="candleStatus">Tap the candle to blow out the flame!</div>      </div>
-      <!-- Element 4: Love Meter Dial -->      <div class="feature-box">        <div class="feature-title"> 4. Interactive Love Meter</div>        <input type="range" min="0" max="100" value="50" class="dial-slider" id="loveSlider" oninput="updateLoveMeter(this.value)">        <div class="note-display" id="loveMeterText">Current Love Level: 50%</div>      </div>
-      <!-- Element 5: Why I Love You Slot Machine -->      <div class="feature-box">        <div class="feature-title"> 5. 'Why I Love You' Reason Generator</div>        <button class="btn-action" onclick="spinReason()">Spin for a Reason </button>        <div class="slot-display" id="slotReason">Click spin to find out why you're amazing!</div>      </div>
-      <!-- Element 6: Cute Melody Player -->      <div class="feature-box">        <div class="feature-title"> 6. Romantic Chime Box</div>        <div class="music-bar">          <button class="btn-action" onclick="playMelody()">Play Sweet Chime </button>        </div>      </div>
-      <!-- Element 7: Virtual Wish Jar -->      <div class="feature-box">        <div class="feature-title"> 7. Sealed Wish Jar</div>        <input type="text" id="wishInput" class="wish-input" placeholder="Type a birthday wish...">        <button class="btn-action" style="padding: 8px 16px;" onclick="addWish()">Seal Wish </button>        <div class="note-display" id="wishDisplay">Jar holds 0 wishes for us.</div>      </div>
-      <!-- Element 8: Love Fortune Cookie -->      <div class="feature-box">        <div class="feature-title"> 8. Crack Open Your Birthday Fortune</div>        <div class="cookie-icon" onclick="crackCookie()"> </div>        <div class="note-display" id="cookieText">Tap the cookie to break it open!</div>      </div>
-      <!-- Element 9: Instant Compliment Shower -->      <div class="feature-box">        <div class="feature-title"> 9. Love & Sunshine Generator</div>        <button class="btn-action" onclick="giveCompliment()">Give Me Love </button>        <div class="compliment-box note-display" id="complimentText">Need a little extra affection right now?</div>      </div>
-      <!-- Element 10: Virtual Kisses & Heart Shower -->      <div class="feature-box">        <div class="feature-title"> 10. Virtual Kisses Counter</div>        <button class="btn-action" onclick="sendKiss(event)">Send Kisses </button>        <div><span class="kiss-badge" id="kissBadge">Kisses sent: 0</span></div>        <div class="note-display" id="kissNote">Tap to shower affection!</div>      </div>
-      <!-- Element 11: Mood Matcher -->      <div class="feature-box">        <div class="feature-title"> 11. Today's Romance Forecast</div>        <button class="btn-action" onclick="checkForecast()">Read Today's Forecast </button>        <div class="note-display" id="forecastText">Click to check what the stars say for us today!</div>      </div>
-      <!-- Element 12: Hug Battery Recharger -->      <div class="feature-box">        <div class="feature-title"> 12. Hug Battery Recharger</div>        <button class="btn-action" onclick="chargeHug()">Press to Hold & Hug </button>        <div class="battery-bar">          <div class="battery-fill" id="batteryFill"></div>        </div>        <div class="note-display" id="batteryText">Hug Charge: 20%</div>      </div>
-    </div>
-    <!-- Interactive Confetti Button -->    <button class="btn-celebrate" onclick="fireConfetti(event)">Celebrate! </button>
-    <!-- Countdown Timer -->    <div style="margin-top: 35px;">      <div class="countdown-title">Next Birthday Celebration</div>      <div class="timer-grid">        <div class="timer-box"><span id="days">00</span><label>Days</label></div>        <div class="timer-box"><span id="hours">00</span><label>Hours</label></div>        <div class="timer-box"><span id="mins">00</span><label>Mins</label></div>        <div class="timer-box"><span id="secs">00</span><label>Secs</label></div>      </div>    </div>
-  </div>
-  <script>    /* Card Flip Handler */    function toggleCard() {      const card = document.getElementById('birthdayCard');      card.classList.toggle('flipped');            if (card.classList.contains('flipped')) {        confetti({          particleCount: 40,          spread: 60,          origin: { y: 0.6 }        });      }    }
-    /* 1. Scratch Card */    const canvas = document.getElementById('scratchCanvas');    const ctx = canvas.getContext('2d');    let isDrawing = false;    let scratched = false;
-    function initScratch() {      const rect = canvas.parentNode.getBoundingClientRect();      canvas.width = rect.width;      canvas.height = rect.height;
-      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);      grad.addColorStop(0, '#ffd700');      grad.addColorStop(0.5, '#ff85a1');      grad.addColorStop(1, '#ff3366');      ctx.fillStyle = grad;      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(255,255,255,0.2)';      for(let i=0; i<30; i++) {        ctx.beginPath();        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*20, 0, Math.PI*2);        ctx.fill();      }
-      ctx.font = 'bold 13px sans-serif';      ctx.fillStyle = '#ffffff';      ctx.textAlign = 'center';      ctx.fillText('Scratch to reveal secret note ', canvas.width / 2, canvas.height / 2 + 5);    }
-    function scratch(e) {      if (!isDrawing) return;      const rect = canvas.getBoundingClientRect();      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;      const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-      ctx.globalCompositeOperation = 'destination-out';      ctx.beginPath();      ctx.arc(x, y, 18, 0, Math.PI * 2);      ctx.fill();
-      if (!scratched) {        scratched = true;        confetti({ particleCount: 25, spread: 50, origin: { y: 0.7 } });      }    }
-    canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });    canvas.addEventListener('mousemove', scratch);    window.addEventListener('mouseup', () => { isDrawing = false; });    canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });    canvas.addEventListener('touchmove', scratch);    window.addEventListener('touchend', () => { isDrawing = false; });    window.onload = initScratch;
-    /* 2. Memory Capsule */    const memories = [      "Remembering the first time we talked... I knew right then you were special ",      "Your smile is literally the prettiest thing I get to see every single day ",      "I love how comfortable and happy I feel whenever I am with you ",      "Every sweet song I listen to reminds me of your laughter "    ];    function popMemory(e) {      e.stopPropagation();      const note = document.getElementById('capsuleNote');      note.innerText = memories[Math.floor(Math.random() * memories.length)];      confetti({ particleCount: 15, spread: 40, origin: { y: 0.7 } });    }
-    /* 3. Blow Candle */    let candleBlown = false;    function blowCandle() {      const elem = document.getElementById('candleElem');      const status = document.getElementById('candleStatus');      if (!candleBlown) {        elem.innerText = ' ';        status.innerText = "Wish made! May all your dreams come true ";        candleBlown = true;        confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });      } else {        elem.innerText = ' ';        status.innerText = "Candle relit! Make another wish!";        candleBlown = false;      }    }
-    /* 4. Love Meter */    function updateLoveMeter(val) {      const txt = document.getElementById('loveMeterText');      if (val < 100) {        txt.innerText = `Current Love Level: ${val}%`;      } else {        txt.innerText = "OVERFLOWING! Infinite Love Reached! ";        confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });      }    }
-    /* 5. Reasons Slot Machine */    const reasons = [      "You have the kindest heart in the whole world ",      "You make even simple days feel like a big celebration ",      "Your laugh is completely contagious and adorable ",      "You understand me like nobody else does ",      "You look insanely cute when you're focusing on something "    ];    function spinReason() {      const elem = document.getElementById('slotReason');      elem.innerText = "Spinning... ";      setTimeout(() => {        elem.innerText = reasons[Math.floor(Math.random() * reasons.length)];      }, 300);    }
-    /* 6. Audio Synthesizer Chime */    function playMelody() {      try {        const AudioCtx = window.AudioContext || window.webkitAudioContext;        const ctx = new AudioCtx();        const notes = [261.63, 329.63, 392.00, 523.25]; // C E G C        notes.forEach((freq, idx) => {          const osc = ctx.createOscillator();          const gain = ctx.createGain();          osc.type = 'sine';          osc.frequency.value = freq;          gain.gain.setValueAtTime(0.1, ctx.currentTime + idx * 0.2);          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.2 + 0.4);          osc.connect(gain);          gain.connect(ctx.destination);          osc.start(ctx.currentTime + idx * 0.2);          osc.stop(ctx.currentTime + idx * 0.2 + 0.4);        });        confetti({ particleCount: 15, spread: 40, origin: { y: 0.7 } });      } catch(e) {        alert(" Musical chime playing in spirit! ");      }    }
-    /* 7. Wish Jar */    let wishCount = 0;    function addWish() {      const input = document.getElementById('wishInput');      const display = document.getElementById('wishDisplay');      if (input.value.trim() !== '') {        wishCount++;        display.innerText = `Wish sealed into the jar! Total wishes: ${wishCount} `;        input.value = '';        confetti({ particleCount: 20, spread: 45, origin: { y: 0.7 } });      }    }
-    /* 8. Fortune Cookie */    const fortunes = [      "A year filled with endless laughter, sweet hugs, and zero stress awaits you! ",      "You are about to have the happiest, most beautiful year yet! ",      "Great joy and unforgettable memories are coming your way very soon! "    ];    function crackCookie() {      const elem = document.getElementById('cookieText');      elem.innerText = fortunes[Math.floor(Math.random() * fortunes.length)];      confetti({ particleCount: 25, spread: 50, origin: { y: 0.7 } });    }
-    /* 9. Compliment Shower */    const compliments = [      "You are genuinely one of a kind and so precious ",      "Everything is better when you're around ",      "You shine brighter than any star in the night sky ",      "I'm so incredibly proud of everything you do "    ];    function giveCompliment() {      document.getElementById('complimentText').innerText = compliments[Math.floor(Math.random() * compliments.length)];    }
-    /* 10. Kisses Counter */    let kissCount = 0;    function sendKiss(e) {      e.stopPropagation();      kissCount++;      document.getElementById('kissBadge').innerText = `Kisses sent: ${kissCount}`;      document.getElementById('kissNote').innerText = "Sending big warm kisses right now! ";      confetti({ particleCount: 15, spread: 40, origin: { y: 0.7 }, colors: ['#ff3366', '#ff85a1'] });    }
-    /* 11. Romance Forecast */    const forecasts = [      "100% chance of sweet smiles, warm cuddles, and endless love today! ",      "Forecast predicts a sudden burst of happiness and unexpected treats! ",      "High probability of feeling loved and cherished all day long! "    ];    function checkForecast() {      document.getElementById('forecastText').innerText = forecasts[Math.floor(Math.random() * forecasts.length)];    }
-    /* 12. Hug Battery */    let hugCharge = 20;    function chargeHug() {      if (hugCharge < 100) {        hugCharge += 20;      } else {        hugCharge = 100;      }      document.getElementById('batteryFill').style.width = hugCharge + '%';      document.getElementById('batteryText').innerText = hugCharge === 100 ? "FULLY CHARGED! Maximum Hug Energy! " : `Hug Charge: ${hugCharge}%`;      if (hugCharge === 100) {        confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });      }    }
-    /* Burst Confetti Handler */    function fireConfetti(e) {      e.stopPropagation();      const count = 200;      const defaults = { origin: { y: 0.7 } };
-      function fire(particleRatio, opts) {        confetti(Object.assign({}, defaults, opts, {          particleCount: Math.floor(count * particleRatio)        }));      }
-      fire(0.25, { spread: 26, startVelocity: 55 });      fire(0.2, { spread: 60 });      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });      fire(0.1, { spread: 120, startVelocity: 45 });    }
-    /* Countdown Timer Script */    const targetDate = new Date();    targetDate.setFullYear(targetDate.getFullYear() + 1);
-    function updateTimer() {      const now = new Date();      const diff = targetDate - now;
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);      const mins = Math.floor((diff / 1000 / 60) % 60);      const secs = Math.floor((diff / 1000) % 60);
-      document.getElementById('days').innerText = String(days).padStart(2, '0');      document.getElementById('hours').innerText = String(hours).padStart(2, '0');      document.getElementById('mins').innerText = String(mins).padStart(2, '0');      document.getElementById('secs').innerText = String(secs).padStart(2, '0');    }
-    setInterval(updateTimer, 1000);    updateTimer();  </script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, My Love! 🎂✨</title>
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #1a1c20 0%, #0f1016 100%);
+      --accent-color: #ff3366;
+      --gold: #ffd700;
+      --pink: #ff85a1;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-gradient);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* 3D Flip Card Container */
+    .card-container {
+      perspective: 1000px;
+      width: 100%;
+      height: 380px;
+      margin-bottom: 25px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+
+    .card-container.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 24px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .card-front h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, #ff3366, #ff99ac, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+
+    .cake-icon {
+      font-size: 5rem;
+      margin: 20px 0;
+      animation: bounce 2s infinite;
+    }
+
+    .tap-hint {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 15px;
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    /* Card Back Styling */
+    .card-back {
+      transform: rotateY(180deg);
+      text-align: left;
+    }
+
+    .card-back h2 {
+      color: var(--gold);
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      align-self: center;
+    }
+
+    .card-back p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      margin-bottom: 15px;
+    }
+
+    /* --- CUTE PLAYING ELEMENTS & ROMANTIC NOTES --- */
+    .play-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    /* Element 1: Romantic Love Coupon Box */
+    .coupon-card {
+      background: rgba(255, 133, 161, 0.1);
+      border: 1px dashed var(--pink);
+      border-radius: 16px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .coupon-card:hover {
+      background: rgba(255, 133, 161, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .coupon-title {
+      font-weight: bold;
+      color: var(--pink);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .coupon-text {
+      font-size: 0.95rem;
+      color: #ffe5ec;
+      margin-top: 8px;
+      display: none;
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* Shared Box Styling for Elements */
+    .feature-box {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-action {
+      background: linear-gradient(45deg, #ff758f, var(--accent-color));
+      border: none;
+      color: white;
+      padding: 10px 22px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 75, 114, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .btn-action:active {
+      transform: scale(0.95);
+    }
+
+    .status-note {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--gold);
+      min-height: 22px;
+      font-style: italic;
+    }
+
+    /* Unique Element Specific Styles */
+    .candle-icon {
+      font-size: 2.5rem;
+      cursor: pointer;
+      user-select: none;
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+
+    .dial-slider {
+      width: 100%;
+      accent-color: var(--accent-color);
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* Interactive Confetti Button */
+    .btn-celebrate {
+      background: linear-gradient(45deg, var(--accent-color), #ff6b8b);
+      border: none;
+      color: white;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-celebrate:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(255, 51, 102, 0.9);
+    }
+
+    /* Countdown Styling */
+    .countdown-title {
+      font-size: 0.95rem;
+      color: #bbb;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .timer-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 12px 5px;
+    }
+
+    .timer-box span {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--gold);
+    }
+
+    .timer-box label {
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Interactive 3D Card -->
+    <div class="card-container" id="birthdayCard" onclick="toggleCard()">
+      <div class="card-inner">
+        
+        <!-- Front Side -->
+        <div class="card-front">
+          <h1>Happy Birthday!</h1>
+          <div class="cake-icon">🎂</div>
+          <p>Wishing you an extraordinary day filled with endless joy and laughter!</p>
+          <div class="tap-hint">✨ Tap to open card ✨</div>
+        </div>
+
+        <!-- Back Side -->
+        <div class="card-back">
+          <h2>Special Message 💌</h2>
+          <p>May this year bring you closer to your dreams, surround you with love, and grant you unforgettable moments.</p>
+          <p>Keep shining brightly and being the incredible person you are!</p>
+          <p style="text-align: right; color: var(--gold); font-weight: bold;">— With Love ❤️</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Cute Playing Elements & Romantic Notes -->
+    <div class="play-section">
+      
+      <!-- Playing Element 1: Tap to Reveal Romantic Coupon -->
+      <div class="coupon-card" onclick="revealCoupon(this)">
+        <div class="coupon-title">🎟️ Tap to Unlock Your Lifetime Birthday Coupon!</div>
+        <div class="coupon-text">
+          "Redeemable for 1,000 warm hugs, late-night ice cream runs, and unconditional love forever. No expiration date! ❤️"
+        </div>
+      </div>
+
+      <!-- Playing Element 2: Kiss Counter & Random Romantic Notes -->
+      <div class="feature-box">
+        <button class="btn-action" onclick="sendKiss(event)">
+          💋 Send Virtual Kisses (<span id="kissCount">0</span>)
+        </button>
+        <div class="status-note" id="kissNote">Tap the button to shower love!</div>
+      </div>
+
+      <!-- NEW Element 3: Make a Wish Candle -->
+      <div class="feature-box">
+        <div class="candle-icon" id="candleElem" onclick="blowCandle()">🕯️</div>
+        <div class="status-note" id="candleStatus">Tap the candle to blow out the flame & make a wish!</div>
+      </div>
+
+      <!-- NEW Element 4: Interactive Love Meter -->
+      <div class="feature-box">
+        <div style="font-weight: bold; color: var(--pink); font-size: 0.95rem;">💖 Love Meter</div>
+        <input type="range" min="0" max="100" value="50" class="dial-slider" id="loveSlider" oninput="updateLoveMeter(this.value)">
+        <div class="status-note" id="loveMeterText">Current Love Level: 50%</div>
+      </div>
+
+      <!-- NEW Element 5: Reason Generator -->
+      <div class="feature-box">
+        <button class="btn-action" onclick="spinReason()">Why You're So Special 🎲</button>
+        <div class="status-note" id="slotReason">Tap to find out why I love you!</div>
+      </div>
+
+    </div>
+
+    <!-- Interactive Confetti Button -->
+    <button class="btn-celebrate" onclick="fireConfetti(event)">Celebrate! 🎉</button>
+
+    <!-- Countdown Timer -->
+    <div style="margin-top: 35px;">
+      <div class="countdown-title">Next Birthday Celebration</div>
+      <div class="timer-grid">
+        <div class="timer-box"><span id="days">00</span><label>Days</label></div>
+        <div class="timer-box"><span id="hours">00</span><label>Hours</label></div>
+        <div class="timer-box"><span id="mins">00</span><label>Mins</label></div>
+        <div class="timer-box"><span id="secs">00</span><label>Secs</label></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* Card Flip Handler */
+    function toggleCard() {
+      const card = document.getElementById('birthdayCard');
+      card.classList.toggle('flipped');
+      
+      if (card.classList.contains('flipped')) {
+        confetti({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    /* Playing Element 1: Reveal Coupon Note */
+    function revealCoupon(element) {
+      const text = element.querySelector('.coupon-text');
+      if (text.style.display === 'block') {
+        text.style.display = 'none';
+      } else {
+        text.style.display = 'block';
+        confetti({ particleCount: 25, spread: 50, origin: { y: 0.7 } });
+      }
+    }
+
+    /* Playing Element 2: Send Kiss & Show Romantic Notes */
+    let kissCount = 0;
+    const romanticNotes = [
+      "You make my heart skip a beat every day! 💓",
+      "Loving you is my absolute favorite thing to do! ✨",
+      "You're the sweetest part of my life! 🍬",
+      "Sending you a giant hug right now! 🤗",
+      "My heart belongs to you, today and forever! 💖"
+    ];
+
+    function sendKiss(e) {
+      e.stopPropagation();
+      kissCount++;
+      document.getElementById('kissCount').innerText = kissCount;
+
+      const randomNote = romanticNotes[Math.floor(Math.random() * romanticNotes.length)];
+      document.getElementById('kissNote').innerText = randomNote;
+
+      confetti({
+        particleCount: 15,
+        spread: 40,
+        origin: { y: 0.7 },
+        colors: ['#ff3366', '#ff85a1', '#ffd700']
+      });
+    }
+
+    /* NEW Element 3: Blow Candle Logic */
+    let candleBlown = false;
+    function blowCandle() {
+      const elem = document.getElementById('candleElem');
+      const status = document.getElementById('candleStatus');
+      if (!candleBlown) {
+        elem.innerText = '💨🎂';
+        status.innerText = "Wish made! May all your dreams come true ✨";
+        candleBlown = true;
+        confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });
+      } else {
+        elem.innerText = '🕯️';
+        status.innerText = "Candle relit! Make another wish!";
+        candleBlown = false;
+      }
+    }
+
+    /* NEW Element 4: Love Meter Logic */
+    function updateLoveMeter(val) {
+      const txt = document.getElementById('loveMeterText');
+      if (val < 100) {
+        txt.innerText = `Current Love Level: ${val}%`;
+      } else {
+        txt.innerText = "OVERFLOWING! Infinite Love Reached! 💖💖💖";
+        confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
+      }
+    }
+
+    /* NEW Element 5: Reason Generator Logic */
+    const reasons = [
+      "You have the kindest, sweetest heart in the world 💕",
+      "You make even simple moments feel magical ✨",
+      "Your laugh is my absolute favorite sound 😄",
+      "You understand me better than anyone else ❤️",
+      "You make my world so much brighter every day 🌟"
+    ];
+    function spinReason() {
+      const elem = document.getElementById('slotReason');
+      elem.innerText = "Thinking... 🎲";
+      setTimeout(() => {
+        elem.innerText = reasons[Math.floor(Math.random() * reasons.length)];
+        confetti({ particleCount: 15, spread: 40, origin: { y: 0.7 } });
+      }, 300);
+    }
+
+    /* Burst Confetti Handler */
+    function fireConfetti(e) {
+      e.stopPropagation();
+      
+      const count = 200;
+      const defaults = { origin: { y: 0.7 } };
+
+      function fire(particleRatio, opts) {
+        confetti(Object.assign({}, defaults, opts, {
+          particleCount: Math.floor(count * particleRatio)
+        }));
+      }
+
+      fire(0.25, { spread: 26, startVelocity: 55 });
+      fire(0.2, { spread: 60 });
+      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+      fire(0.1, { spread: 120, startVelocity: 45 });
+    }
+
+    /* Countdown Timer Script */
+    const targetDate = new Date();
+    targetDate.setFullYear(targetDate.getFullYear() + 1);
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / 1000 / 60) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      document.getElementById('days').innerText = String(days).padStart(2, '0');
+      document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('mins').innerText = String(mins).padStart(2, '0');
+      document.getElementById('secs').innerText = String(secs).padStart(2, '0');
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+  </script>
+</body>
+</html>
