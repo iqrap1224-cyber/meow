@@ -1,385 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Birthday My Love ✨</title>
-  <style>
-    :root {
-      --primary: #ff4d6d;
-      --secondary: #ff758f;
-      --accent: #ffb3c1;
-      --gold: #ffe5ec;
-      --glass: rgba(255, 255, 255, 0.12);
-      --glass-border: rgba(255, 255, 255, 0.25);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Poppins', 'Segoe UI', sans-serif;
-      background: linear-gradient(-45deg, #2b0938, #590d45, #800f4e, #2b0938);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      color: #ffffff;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Floating Canvas */
-    #magic-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* Music Floating Button */
-    .music-btn {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      z-index: 100;
-      background: rgba(255, 77, 109, 0.8);
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      border-radius: 50px;
-      padding: 12px 24px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 0 20px rgba(255, 77, 109, 0.6);
-      transition: all 0.3s ease;
-    }
-
-    .music-btn:hover {
-      transform: scale(1.08);
-      background: var(--primary);
-      box-shadow: 0 0 30px rgba(255, 77, 109, 0.9);
-    }
-
-    /* Tap to Start Audio Overlay */
-    #entry-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(15, 5, 29, 0.95);
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      backdrop-filter: blur(15px);
-      transition: opacity 1s ease, visibility 1s;
-    }
-
-    #entry-overlay h1 {
-      font-size: 2.8rem;
-      background: linear-gradient(45deg, #ff758f, #ffffff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 15px;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      max-width: 850px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-
-    section {
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 40px;
-      margin-bottom: 60px;
-      background: var(--glass);
-      backdrop-filter: blur(16px);
-      border-radius: 30px;
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-      animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-
-    h1, h2 {
-      font-size: 2.6rem;
-      margin-bottom: 20px;
-      background: linear-gradient(45deg, var(--accent), #ffffff, var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    p {
-      font-size: 1.15rem;
-      line-height: 1.8;
-      color: #f1f1f1;
-    }
-
-    /* Counter Styling */
-    .counter-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-top: 25px;
-      width: 100%;
-    }
-
-    .counter-box {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px 10px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .counter-box span {
-      display: block;
-      font-size: 2.2rem;
-      font-weight: bold;
-      color: var(--accent);
-    }
-
-    /* Gallery Grid */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      width: 100%;
-      margin-top: 25px;
-    }
-
-    .gallery-card {
-      height: 220px;
-      border-radius: 20px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--glass-border);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-
-    .gallery-card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 10px 25px rgba(255, 75, 114, 0.5);
-    }
-
-    /* Interactive Button */
-    .magic-btn {
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
-      border: none;
-      padding: 16px 40px;
-      border-radius: 50px;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 25px rgba(255, 77, 109, 0.6);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .magic-btn:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 35px rgba(255, 77, 109, 0.9);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Entry Overlay to allow Audio Playback -->
-  <div id="entry-overlay" onclick="startMagic()">
-    <h1>✨ Tap to Enter Our World ✨</h1>
-    <p>Turn your sound on 🎵</p>
-  </div>
-
-  <!-- Background Music Element -->
-  <!-- Replace audio URL below with your preferred direct MP3 link for "In the Middle of June" -->
-  <audio id="bg-music" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- Music Toggle Floating Button -->
-  <button class="music-btn" onclick="toggleMusic()">
-    <span id="music-icon">🎵</span> <span id="music-text">Playing</span>
-  </button>
-
-  <canvas id="magic-canvas"></canvas>
-
-  <div class="container">
-
-    <section>
-      <h1>Happy Birthday, My Entire World ❤️</h1>
-      <p>"In the middle of June, or any day of the year... loving you is the easiest thing I've ever done."</p>
-    </section>
-
-    <section>
-      <h2>Time Spent Loving You ⏳</h2>
-      <div class="counter-grid">
-        <div class="counter-box"><span id="days">0</span>Days</div>
-        <div class="counter-box"><span id="hours">0</span>Hours</div>
-        <div class="counter-box"><span id="mins">0</span>Mins</div>
-        <div class="counter-box"><span id="secs">0</span>Secs</div>
-      </div>
-    </section>
-
-    <section>
-      <h2>Our Magical Moments 📸</h2>
-      <div class="gallery-grid">
-        <div class="gallery-card" style="background-image: url('https://picsum.photos/400/400?random=10');"></div>
-        <div class="gallery-card" style="background-image: url('https://picsum.photos/400/400?random=11');"></div>
-        <div class="gallery-card" style="background-image: url('https://picsum.photos/400/400?random=12');"></div>
-        <div class="gallery-card" style="background-image: url('https://picsum.photos/400/400?random=13');"></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>A Wish For You 💫</h2>
-      <button class="magic-btn" onclick="burstLove()">Shower My Love!</button>
-    </section>
-
-  </div>
-
-  <script>
-    /* Audio Handling */
-    const music = document.getElementById('bg-music');
-    let isPlaying = false;
-
-    function startMagic() {
-      document.getElementById('entry-overlay').style.opacity = '0';
-      setTimeout(() => {
-        document.getElementById('entry-overlay').style.visibility = 'hidden';
-      }, 1000);
-      music.play();
-      isPlaying = true;
-    }
-
-    function toggleMusic() {
-      if (isPlaying) {
-        music.pause();
-        document.getElementById('music-icon').innerText = '🔇';
-        document.getElementById('music-text').innerText = 'Paused';
-      } else {
-        music.play();
-        document.getElementById('music-icon').innerText = '🎵';
-        document.getElementById('music-text').innerText = 'Playing';
-      }
-      isPlaying = !isPlaying;
-    }
-
-    /* Animated Canvas (Hearts + Star Sparkles) */
-    const canvas = document.getElementById('magic-canvas');
-    const ctx = canvas.getContext('2d');
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    const items = [];
-    class MagicParticle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 30;
-        this.size = Math.random() * 16 + 8;
-        this.speedY = Math.random() * 1.2 + 0.4;
-        this.speedX = Math.sin(Math.random() * Math.PI) * 0.5;
-        this.opacity = Math.random() * 0.6 + 0.3;
-        this.symbol = Math.random() > 0.3 ? '💖' : '✨';
-      }
-      update() {
-        this.y -= this.speedY;
-        this.x += this.speedX;
-        if (this.y < -30) this.reset();
-      }
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.opacity;
-        ctx.font = `${this.size}px serif`;
-        ctx.fillText(this.symbol, this.x, this.y);
-        ctx.restore();
-      }
-    }
-
-    for (let i = 0; i < 40; i++) items.push(new MagicParticle());
-
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      items.forEach(item => { item.update(); item.draw(); });
-      requestAnimationFrame(render);
-    }
-    render();
-
-    /* Relationship Counter */
-    const startDate = new Date('2022-06-15T00:00:00');
-    function updateCounter() {
-      const diff = new Date() - startDate;
-      document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-      document.getElementById('hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      document.getElementById('mins').innerText = Math.floor((diff / 1000 / 60) % 60);
-      document.getElementById('secs').innerText = Math.floor((diff / 1000) % 60);
-    }
-    setInterval(updateCounter, 1000);
-    updateCounter();
-
-    /* Love Burst Effect */
-    function burstLove() {
-      for (let i = 0; i < 50; i++) {
-        const p = document.createElement('div');
-        p.innerText = ['❤️', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
-        p.style.position = 'fixed';
-        p.style.left = '50vw';
-        p.style.top = '50vh';
-        p.style.fontSize = `${Math.random() * 24 + 18}px`;
-        p.style.pointerEvents = 'none';
-        p.style.transition = 'all 1.8s cubic-bezier(0.1, 1, 0.1, 1)';
-        p.style.zIndex = '9999';
-
-        document.body.appendChild(p);
-
-        const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * 350 + 100;
-
-        setTimeout(() => {
-          p.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0)`;
-          p.style.opacity = '0';
-        }, 20);
-
-        setTimeout(() => p.remove(), 1800);
-      }
-    }
-  </script>
-</body>
-</html>
+<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  <title>The Magical Story of Us Happy Birthday!</title>  <style>    :root {      --primary: #ff4d6d;      --secondary: #ff85a1;      --accent: #fbb1bd;      --gold: #ffe5ec;      --glass: rgba(255, 255, 255, 0.1);      --glass-border: rgba(255, 255, 255, 0.2);    }
+    * {      box-sizing: border-box;      margin: 0;      padding: 0;      scroll-behavior: smooth;    }
+    body {      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;      background: radial-gradient(circle at center, #2e0854, #18032d, #0c011a);      color: #ffffff;      overflow-x: hidden;      min-height: 100vh;    }
+    /* Floating Particles Canvas */    #particle-canvas {      position: fixed;      top: 0;      left: 0;      width: 100vw;      height: 100vh;      pointer-events: none;      z-index: 1;    }
+    /* Floating Music Bar with Wave Animation */    .music-bar {      position: fixed;      bottom: 20px;      right: 20px;      z-index: 100;      background: rgba(255, 77, 109, 0.25);      backdrop-filter: blur(12px);      border: 1px solid var(--glass-border);      padding: 10px 20px;      border-radius: 30px;      display: flex;      align-items: center;      gap: 12px;      cursor: pointer;      box-shadow: 0 8px 32px rgba(255, 77, 109, 0.3);    }
+    .waves {      display: flex;      align-items: flex-end;      gap: 3px;      height: 18px;    }
+    .wave-bar {      width: 3px;      height: 100%;      background: var(--secondary);      animation: jump 0.8s ease-in-out infinite alternate;    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes jump {      0% { height: 20%; }      100% { height: 100%; }    }
+    /* Start Screen Curtain Overlay */    #curtain-overlay {      position: fixed;      top: 0;      left: 0;      width: 100vw;      height: 100vh;      background: radial-gradient(circle, #3b0764, #0f021e);      z-index: 999;      display: flex;      flex-direction: column;      justify-content: center;      align-items: center;      cursor: pointer;      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);    }
+    .curtain-title {      font-size: 3rem;      background: linear-gradient(45deg, #ff85a1, #ffffff);      -webkit-background-clip: text;      -webkit-text-fill-color: transparent;      margin-bottom: 10px;      animation: pulse 2s infinite alternate;    }
+    .container {      position: relative;      z-index: 2;      max-width: 800px;      margin: 0 auto;      padding: 40px 20px;    }
+    section {      min-height: 85vh;      display: flex;      flex-direction: column;      justify-content: center;      align-items: center;      text-align: center;      padding: 40px;      margin-bottom: 50px;      background: var(--glass);      backdrop-filter: blur(15px);      border-radius: 30px;      border: 1px solid var(--glass-border);      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);    }
+    h1, h2 {      font-size: 2.5rem;      margin-bottom: 15px;      color: var(--gold);      text-shadow: 0 0 10px rgba(255, 133, 161, 0.5);    }
+    p {      font-size: 1.15rem;      line-height: 1.8;      color: #e2e8f0;      max-width: 650px;    }
+    .love-note {      margin-top: 20px;      font-style: italic;      color: var(--accent);      background: rgba(255, 255, 255, 0.05);      padding: 12px 20px;      border-radius: 12px;      border-left: 3px solid var(--primary);    }
+    /* Element 1: Interactive Birthday Cake */    .cake-container {      position: relative;      width: 150px;      height: 120px;      background: #e11d48;      border-radius: 15px 15px 0 0;      margin: 40px 0;      box-shadow: inset 0 10px 0 #fda4af;      cursor: pointer;    }
+    .flame {      position: absolute;      top: -25px;      left: 50%;      transform: translateX(-50%);      width: 16px;      height: 25px;      background: #f97316;      border-radius: 50% 50% 20% 20%;      box-shadow: 0 0 15px #f97316;      animation: flicker 0.6s infinite alternate;    }
+    @keyframes flicker {      0% { transform: translateX(-50%) scale(1); }      100% { transform: translateX(-50%) scale(1.2); }    }
+    /* Element 2: Love Fortune Wheel */    .wheel-container {      position: relative;      margin: 25px 0;    }
+    .wheel-btn {      background: linear-gradient(45deg, var(--primary), var(--secondary));      border: none;      padding: 15px 35px;      color: white;      font-size: 1.1rem;      border-radius: 30px;      cursor: pointer;      box-shadow: 0 0 20px rgba(255, 77, 109, 0.5);      transition: transform 0.2s;    }
+    .wheel-btn:hover { transform: scale(1.05); }
+    .fortune-result {      margin-top: 20px;      font-weight: bold;      font-size: 1.2rem;      color: var(--secondary);      min-height: 30px;    }
+    /* Element 3: Interactive Love Jar */    .jar {      width: 120px;      height: 160px;      border: 4px solid var(--glass-border);      border-radius: 20px 20px 40px 40px;      position: relative;      background: rgba(255, 255, 255, 0.05);      margin: 20px 0;      overflow: hidden;      cursor: pointer;    }
+    .jar-count {      font-size: 2rem;      font-weight: bold;      margin-top: 10px;      color: var(--primary);    }
+    /* Animations */    @keyframes pulse {      0% { transform: scale(1); }      100% { transform: scale(1.05); }    }  </style></head><body>
+  <!-- Entry Screen Overlay -->  <div id="curtain-overlay" onclick="openStory()">    <div class="curtain-title"> The Book of Our Love</div>    <p>Tap anywhere to begin your birthday journey </p>  </div>
+  <!-- Music Controls -->  <div class="music-bar" onclick="toggleAudio()">    <div class="waves">      <div class="wave-bar"></div>      <div class="wave-bar"></div>      <div class="wave-bar"></div>    </div>    <span id="music-text">Playing Birthday Serenade</span>  </div>
+  <canvas id="particle-canvas"></canvas>
+  <div class="container">
+    <!-- Chapter 1: Introduction -->    <section>      <h2>Chapter I: Happy Birthday, My Love </h2>      <p>Today is a story written by the stars just for you. Every moment today belongs to your beautiful smile.</p>      <div class="love-note"> Note: "In every universe, I would choose you over and over again."</div>    </section>
+    <!-- Chapter 2: Interactive Cake -->    <section>      <h2>Chapter II: Make A Birthday Wish </h2>      <p>Tap the candle below to blow out the flame and send your wish into the universe!</p>      <div class="cake-container" onclick="blowCandle()">        <div class="flame" id="candle-flame"></div>      </div>      <p id="wish-status">Candle is lit! Make a wish and click...</p>      <div class="love-note"> Note: "My only wish is to celebrate every single birthday by your side."</div>    </section>
+    <!-- Chapter 3: Love Wheel -->    <section>      <h2>Chapter III: The Wheel of Promises </h2>      <p>Spin the wheel to unlock your special birthday promise from me!</p>      <div class="wheel-container">        <button class="wheel-btn" onclick="spinWheel()">Spin For A Promise </button>      </div>      <div class="fortune-result" id="fortuneText"></div>      <div class="love-note"> Note: "Every promise is stamped forever on my heart."</div>    </section>
+    <!-- Chapter 4: Love Jar -->    <section>      <h2>Chapter IV: The Jar of Endless Hearts Jar </h2>      <p>Tap the jar to catch glowing love hearts inside!</p>      <div class="jar" onclick="fillJar()"></div>      <div class="jar-count">Hearts Collected: <span id="heartCount">0</span></div>      <div class="love-note"> Note: "My heart fills up a little more every single time you laugh."</div>    </section>
+    <!-- Chapter 5: The Grand Birthday Finale -->    <section>      <h2>Chapter V: Forever & Always </h2>      <p>Happy Birthday my princess. May your day be filled with endless magic, soft giggles, and boundless joy.</p>      <button class="wheel-btn" style="margin-top:20px;" onclick="fireworks()">Shower Birthday Fireworks! </button>    </section>
+  </div>
+  <script>    /* Audio System Engine (Audio + Web Audio API Backup) */    let audioCtx, oscillator;    let isPlaying = false;
+    function openStory() {      const curtain = document.getElementById('curtain-overlay');      curtain.style.opacity = '0';      setTimeout(() => curtain.style.display = 'none', 1200);      startMelody();    }
+    function startMelody() {      try {        audioCtx = new (window.AudioContext || window.webkitAudioContext)();        playRomanticNotes();        isPlaying = true;      } catch (e) {        console.log("Audio ready");      }    }
+    function playRomanticNotes() {      if (!audioCtx) return;      const notes = [261.63, 329.63, 392.00, 523.25, 440.00, 349.23];      let i = 0;      setInterval(() => {        if (!isPlaying) return;        let osc = audioCtx.createOscillator();        let gain = audioCtx.createGain();        osc.type = 'sine';        osc.frequency.setValueAtTime(notes[i % notes.length], audioCtx.currentTime);        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);        osc.connect(gain);        gain.connect(audioCtx.destination);        osc.start();        osc.stop(audioCtx.currentTime + 1.5);        i++;      }, 800);    }
+    function toggleAudio() {      isPlaying = !isPlaying;      document.getElementById('music-text').innerText = isPlaying ? "Playing Birthday Serenade" : "Music Paused";    }
+    /* Floating Particles Canvas */    const canvas = document.getElementById('particle-canvas');    const ctx = canvas.getContext('2d');    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }    resize();    window.addEventListener('resize', resize);
+    const particles = Array.from({ length: 40 }, () => ({      x: Math.random() * window.innerWidth,      y: Math.random() * window.innerHeight,      size: Math.random() * 15 + 8,      speedY: Math.random() * 1 + 0.3,      char: [' ', ' ', ' ', ' '][Math.floor(Math.random() * 4)]    }));
+    function render() {      ctx.clearRect(0, 0, canvas.width, canvas.height);      particles.forEach(p => {        p.y -= p.speedY;        if (p.y < -20) p.y = canvas.height + 20;        ctx.font = `${p.size}px serif`;        ctx.fillText(p.char, p.x, p.y);      });      requestAnimationFrame(render);    }    render();
+    /* Element 1: Blow Candle */    function blowCandle() {      const flame = document.getElementById('candle-flame');      if (flame.style.display !== 'none') {        flame.style.display = 'none';        document.getElementById('wish-status').innerText = ' Your wish has been granted! Happy Birthday! ';        fireworks();      }    }
+    /* Element 2: Fortune Wheel */    const promises = [      " A surprise romantic date night of your choice!",      " Breakfast in bed every weekend this month!",      " A weekend trip to anywhere you want to go!",      " Endless warm hugs whenever you need them!",      " Treating you like a queen every single day!"    ];
+    function spinWheel() {      const res = document.getElementById('fortuneText');      res.innerText = "Spinning for your birthday promise...";      setTimeout(() => {        const choice = promises[Math.floor(Math.random() * promises.length)];        res.innerText = choice;      }, 800);    }
+    /* Element 3: Love Jar */    let hearts = 0;    function fillJar() {      hearts++;      document.getElementById('heartCount').innerText = hearts;    }
+    /* Fireworks Burst Effect */    function fireworks() {      for (let i = 0; i < 50; i++) {        const el = document.createElement('div');        el.innerText = [' ', ' ', ' ', ' '][Math.floor(Math.random() * 4)];        el.style.position = 'fixed';        el.style.left = '50vw';        el.style.top = '50vh';        el.style.fontSize = `${Math.random() * 20 + 20}px`;        el.style.pointerEvents = 'none';        el.style.transition = 'all 1.5s ease-out';        el.style.zIndex = '9999';        document.body.appendChild(el);
+        const angle = Math.random() * Math.PI * 2;        const dist = Math.random() * 300 + 100;        setTimeout(() => {          el.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0)`;          el.style.opacity = '0';        }, 20);        setTimeout(() => el.remove(), 1500);      }    }  </script></body></html>
