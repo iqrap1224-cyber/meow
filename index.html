@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Little Universe</title>
+    <title>The Star-Weaver Interface</title>
     <style>
         :root {
-            --bg-color: #0d0b18;
-            --heart-pink: #ff4d6d;
-            --pastel-purple: #c77dff;
-            --glass-card: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 77, 109, 0.15);
+            --bg-gradient: linear-gradient(135deg, #1a0f1a 0%, #0a050d 100%);
+            --rose-red: #ff3366;
+            --gold-glow: #ffd700;
+            --glass-card: rgba(255, 255, 255, 0.02);
+            --border-line: rgba(255, 51, 102, 0.2);
         }
 
         * {
@@ -20,363 +20,288 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background: var(--bg-gradient);
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 220vh;
             overflow-x: hidden;
-            min-height: 250vh; 
+            position: relative;
         }
 
-        /* Ambient glowing universe backdrop */
-        .cosmic-dust {
+        /* Continuous falling petal layer */
+        #petalCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(255, 77, 109, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(199, 125, 255, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, #15112a 0%, #0d0b18 100%);
-            z-index: -3;
-        }
-
-        /* Mouse particle styling */
-        .sparkle-particle {
-            position: fixed;
             pointer-events: none;
-            z-index: 9999;
-            font-size: 1.2rem;
-            user-select: none;
-            animation: fallFade 1s forwards ease-out;
+            z-index: 1;
         }
 
-        @keyframes fallFade {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--mx), var(--my)) scale(0); opacity: 0; }
-        }
-
-        /* Scroll Progress Tracker Container */
-        .main-canvas {
-            width: 100%;
+        .scroll-container {
             position: relative;
+            z-index: 2;
+            width: 100%;
         }
 
-        .hero-view {
+        /* Screen 1: The Monogram Loom */
+        .section-view {
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
             text-align: center;
+            padding: 2rem;
+            position: relative;
         }
 
-        .pulsing-portal {
-            font-size: 5rem;
+        .interactive-orb {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 30% 30%, #ff6699, #ff3366);
+            border-radius: 50%;
             cursor: pointer;
-            filter: drop-shadow(0 0 20px var(--heart-pink));
-            animation: bouncePulse 3s infinite ease-in-out;
+            box-shadow: 0 0 40px rgba(255, 51, 102, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
             user-select: none;
-            transition: transform 0.2s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .pulsing-portal:hover {
-            transform: scale(1.2);
+        .interactive-orb:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 0 60px rgba(255, 51, 102, 0.9), 0 0 20px var(--gold-glow);
         }
 
-        @keyframes bouncePulse {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-15px) scale(1.05); }
+        .intro-title {
+            font-size: 2.2rem;
+            font-weight: 300;
+            margin-top: 2rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
 
-        .hint-text {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
+        .scroll-down-hint {
+            position: absolute;
+            bottom: 4rem;
+            font-size: 0.85rem;
             letter-spacing: 3px;
             text-transform: uppercase;
-            color: #ffb3c1;
-            opacity: 0.6;
-            animation: breath 2s infinite ease-in-out;
+            color: #ff99bb;
+            opacity: 0.5;
+            animation: bounceTrack 2.5s infinite ease-in-out;
         }
 
-        @keyframes breath {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.8; }
+        @keyframes bounceTrack {
+            0%, 100% { transform: translateY(0); opacity: 0.3; }
+            50% { transform: translateY(10px); opacity: 0.8; }
         }
 
-        /* Dynamic Flower Field (Grows with Scroll) */
-        .garden-tier {
-            height: 60vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .digital-bouquet {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 2.5rem;
-            perspective: 1000px;
-        }
-
-        .flower {
-            transform: scale(0) rotate(-45deg);
-            opacity: 0;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
-            user-select: none;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-        }
-
-        /* Interactive Playground Sandbox */
-        .interactive-tier {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem 1rem;
-        }
-
-        .love-engine-card {
+        /* Screen 2: Dynamic Secret Code Engine */
+        .card-panel {
             background: var(--glass-card);
-            border: 1px solid var(--card-border);
-            padding: 3rem 2rem;
-            border-radius: 24px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
-            max-width: 460px;
-            width: 100%;
+            border: 1px solid var(--border-line);
+            padding: 3.5rem 2.5rem;
+            border-radius: 28px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+            max-width: 480px;
+            width: 90%;
             text-align: center;
             position: relative;
-            overflow: hidden;
         }
 
-        .love-engine-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 77, 109, 0.05), transparent);
-            transform: rotate(45deg);
-            animation: shineSweep 6s infinite linear;
-            pointer-events: none;
-        }
-
-        @keyframes shineSweep {
-            0% { transform: translate(-30%, -30%) rotate(45deg); }
-            100% { transform: translate(30%, 30%) rotate(45deg); }
-        }
-
-        .love-engine-card h2 {
-            font-weight: 300;
-            letter-spacing: 1px;
+        .card-panel h2 {
+            font-size: 1.7rem;
+            font-weight: 400;
             margin-bottom: 2rem;
-            font-size: 1.6rem;
-            color: #fff;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, #ff99bb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .input-slot {
+        .input-row {
+            position: relative;
             margin-bottom: 1.5rem;
         }
 
         input {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem;
             color: #fff;
-            border-radius: 14px;
+            border-radius: 16px;
             width: 100%;
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.05rem;
             outline: none;
-            transition: all 0.3s;
+            transition: all 0.4s;
         }
 
         input:focus {
-            border-color: var(--heart-pink);
-            background: rgba(255, 77, 109, 0.03);
-            box-shadow: 0 0 15px rgba(255, 77, 109, 0.2);
+            border-color: var(--rose-red);
+            background: rgba(255, 51, 102, 0.04);
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.25);
         }
 
-        .action-btn {
-            background: linear-gradient(135deg, var(--heart-pink), #ff758f);
+        .trigger-btn {
+            background: linear-gradient(135deg, #ff3366, #ff0055);
             color: #fff;
             border: none;
-            padding: 1.1rem;
+            padding: 1.2rem;
             width: 100%;
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
-            border-radius: 14px;
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 77, 109, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 51, 102, 0.3);
             transition: all 0.3s;
+            letter-spacing: 1px;
         }
 
-        .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 77, 109, 0.5);
+        .trigger-btn:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(255, 51, 102, 0.5);
         }
 
-        .interactive-feedback {
+        .decryption-terminal {
             margin-top: 2rem;
-            min-height: 70px;
+            min-height: 90px;
             font-size: 1rem;
             line-height: 1.6;
-            color: #ffe5ec;
+            color: #ffe6ec;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.02);
         }
 
-        /* Floating kiss animation modifier */
-        .flying-kiss {
+        /* Sparkle asset click track override */
+        .click-spark {
             position: fixed;
             pointer-events: none;
-            font-size: 2.5rem;
-            z-index: 10000;
-            animation: kissLaunch 1.2s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+            z-index: 99999;
+            font-size: 1.5rem;
+            animation: spitGlow 0.8s forwards cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        @keyframes kissLaunch {
-            0% { transform: scale(0) rotate(0deg); bottom: 10%; left: 50%; opacity: 1; }
-            50% { transform: scale(1.4) rotate(-15deg); }
-            100% { transform: scale(1) rotate(15deg) translateY(-80vh); opacity: 0; }
+        @keyframes spitGlow {
+            0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Infinite space matrix layer -->
-    <div class="cosmic-dust"></div>
+    <!-- Canvas layer for smooth drifting petal background simulation -->
+    <canvas id="petalCanvas"></canvas>
 
-    <div class="main-canvas">
+    <div class="scroll-container">
         
-        <!-- Tier 1: Interactive Entry Engine -->
-        <div class="hero-view">
-            <div class="pulsing-portal" id="portalCore" onclick="triggerBurst(event)">❤️</div>
-            <div class="hint-text">Tap the heart to explode sparkles<br>↓ Then scroll down down down ↓</div>
+        <!-- Part 1: Interactive Key Anchor -->
+        <div class="section-view">
+            <div class="interactive-orb" id="masterOrb" onclick="burstSparks(event)">🌹</div>
+            <h1 class="intro-title">The Quantum Monograph</h1>
+            <div class="scroll-down-hint">↓ Scroll to unlock the weave blueprint ↓</div>
         </div>
 
-        <!-- Tier 2: The Scroll Garden (Asymmetric flower reveal) -->
-        <div class="garden-tier">
-            <div class="digital-bouquet" id="flowerBouquet">
-                <div class="flower">🌸</div>
-                <div class="flower">🌹</div>
-                <div class="flower">🌷</div>
-                <div class="flower">🌻</div>
-                <div class="flower">🌹</div>
-                <div class="flower">🌸</div>
-            </div>
-        </div>
-
-        <!-- Tier 3: The Cryptographic Core -->
-        <div class="interactive-tier">
-            <div class="love-engine-card">
-                <h2>Cosmic Singularity Engine</h2>
+        <!-- Part 2: Generative Cipher Card -->
+        <div class="section-view">
+            <div class="card-panel">
+                <h2>Heartbeat Matrix Engine</h2>
                 
-                <div class="input-slot">
-                    <input type="text" id="nodeAlpha" placeholder="Enter Your Signature" autocomplete="off">
+                <div class="input-row">
+                    <input type="text" id="userIn" placeholder="Your Name" autocomplete="off">
                 </div>
-                <div class="input-slot">
-                    <input type="text" id="nodeBeta" placeholder="Enter Destination Target" autocomplete="off">
+                <div class="input-row">
+                    <input type="text" id="targetIn" placeholder="Their Name" autocomplete="off">
                 </div>
                 
-                <button class="action-btn" onclick="executeCoreProtocol()">Sync Core Alignment</button>
+                <button class="trigger-btn" onclick="runDecryptionSequence()">Synthesize Resonance</button>
                 
-                <div class="interactive-feedback" id="feedbackConsole"></div>
+                <div class="decryption-terminal" id="terminalOutput">
+                    <span style="opacity:0.4; font-style: italic;">Awaiting network handshake...</span>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Magic Cursor Trail Feature
-        const activeParticles = ['✨', '🌸', '💖', '⭐️', '🍬'];
-        window.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.15) return; 
+        // --- 1. Drifting Petals Canvas Physics Engine ---
+        const canvas = document.getElementById('petalCanvas');
+        const ctx = canvas.getContext('2d');
 
-            const item = document.createElement('div');
-            item.className = 'sparkle-particle';
-            item.innerText = activeParticles[Math.floor(Math.random() * activeParticles.length)];
-            item.style.left = e.clientX + 'px';
-            item.style.top = e.clientY + 'px';
-            
-            const scatterX = (Math.random() - 0.5) * 120;
-            const scatterY = (Math.random() - 0.5) * 120 - 50; 
-            item.style.setProperty('--mx', `${scatterX}px`);
-            item.style.setProperty('--my', `${scatterY}px`);
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
 
-            document.body.appendChild(item);
-            setTimeout(() => item.remove(), 1000);
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         });
 
-        // Click Event Explosion
-        function triggerBurst(e) {
-for (let i = 0; i < 12; i++) {
-const splash = document.createElement('div');
-splash.className = 'sparkle-particle';
-splash.innerText = '💖';
-splash.style.left = e.clientX + 'px';
-splash.style.top = e.clientY + 'px';
-const angle = (i / 12) * Math.PI * 2;
-const distance = 80 + Math.random() * 60;
-const scatterX = Math.cos(angle) * distance;
-const scatterY = Math.sin(angle) * distance;
-splash.style.setProperty('--mx', ${scatterX}px);
-splash.style.setProperty('--my', ${scatterY}px);
-document.body.appendChild(splash);
-setTimeout(() => splash.remove(), 1000);
-}
-}
-// Scroll Engine: Grows flowers and distorts elements based on positioning
-window.addEventListener('scroll', () => {
-const viewportHeight = window.innerHeight;
-const currentScroll = window.scrollY;
-const portal = document.getElementById('portalCore');
-if (portal) {
-portal.style.transform = scale(${1 + currentScroll * 0.0015}) rotate(${currentScroll * 0.2}deg);
-portal.style.opacity = Math.max(0, 1 - currentScroll / 500);
-}
-const flowers = document.querySelectorAll('.flower');
-const bouquetContainer = document.getElementById('flowerBouquet');
-if (bouquetContainer) {
-const containerTop = bouquetContainer.getBoundingClientRect().top;
-if (containerTop < viewportHeight * 0.85) {
-flowers.forEach((flower, index) => {
-setTimeout(() => {
-flower.style.transform = 'scale(1) rotate(0deg)';
-flower.style.opacity = '1';
-}, index * 100);
-});
-} else {
-flowers.forEach((flower) => {
-flower.style.transform = 'scale(0) rotate(-45deg)';
-flower.style.opacity = '0';
-});
-}
-}
-});
-// Cryptographic Algorithm Processing Sequence
-function executeCoreProtocol() {
-const alpha = document.getElementById('nodeAlpha').value.trim();
-const beta = document.getElementById('nodeBeta').value.trim();
-const consoleBox = document.getElementById('feedbackConsole');
-if (!alpha || !beta) {
-consoleBox.innerHTML = <span style="color: #ff758f;">⚠️ Secure handshake requires both connection profiles filled.</span>;
-return;
-}
-let checksum = 0;
-const combinedString = (alpha + beta).toLowerCase();
-for (let i = 0; i < combinedString.length; i++) {
-checksum += combinedString.charCodeAt(i);
-}
-const calculationRating = 94 + (checksum % 7);
-const kiss = document.createElement('div');
-kiss.className = 'flying-kiss';
-kiss.innerText = '💋';
-kiss.style.left = (window.innerWidth / 2 - 20) + 'px';
-document.body.appendChild(kiss);
-setTimeout(() => kiss.remove(), 1200);
-consoleBox.innerHTML = <span style="font-size: 1.3rem; color: #ff4d6d; font-weight: bold; display: block; margin-bottom: 0.5rem; text-shadow: 0 0 10px rgba(255,77,109,0.4);"> 💖 Alignment Lock: ${calculationRating}% </span> <span style="font-size: 0.95rem; opacity: 0.9;"> Handshake complete! Sending a programmatic kiss up your interface window! 💋 </span>;
-}
+        const petalPool = [];
+        const petalTypes = ['🌸', '🌹', '💖', '✨'];
+
+        class Petal {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * height; // Distribute initially across screen height
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = -20;
+                this.size = Math.random() * 12 + 14;
+                this.speedY = Math.random() * 1.5 + 1;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.char = petalTypes[Math.floor(Math.random() * petalTypes.length)];
+                this.opacity = Math.random() * 0.4 + 0.3;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 2;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotSpeed;
+                if (this.y > height + 20) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.font = `${this.size}px serif`;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillText(this.char, -this.size/2, this.size/2);
+                ctx.restore();
+            }
+        }
+
+        // Initialize 45 individual particle entities for elegant ambient depth
+        for (let i = 0; i < 45; i++) {
+            petalPool.push(new Petal());
+        }
+
+        function renderLoop() {
+            ctx.clearRect(0, 0, width, height);
+            for (let petal of petalPool) {
+                petal.update();
+                petal.draw();
+            }
+            requestAnimationFrame(renderLoop);
+        }
+        renderLoop();
+
+
+        // --- 2. Screen Space Click Spark Engine ---
+        function burstSparks(e) {
+            const particleCount = 14;
+            for (let i = 0; i < particleCount; i++) {
