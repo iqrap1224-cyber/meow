@@ -1,414 +1,274 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Birthday, My Love ✨</title>
-  <style>
-    :root {
-      --primary-color: #ff4b72;
-      --secondary-color: #ff85a1;
-      --bg-dark: #0f051d;
-      --text-light: #ffffff;
-      --card-bg: rgba(255, 255, 255, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f051d 0%, #290a38 50%, #4a0e4e 100%);
-      color: var(--text-light);
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-
-    /* Background Particle Canvas */
-    #particle-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    section {
-      min-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 40px 20px;
-      margin-bottom: 20px;
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    h1, h2 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      background: linear-gradient(45deg, #ff85a1, #fbb1bd, #ffffff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: #e0e0e0;
-      max-width: 700px;
-    }
-
-    /* Element 1: Hero Banner Header */
-    .hero h1 {
-      font-size: 3.5rem;
-      animation: pulse 2s infinite alternate;
-    }
-
-    /* Element 2: Love Counter */
-    .timer-container {
-      display: flex;
-      gap: 15px;
-      margin-top: 25px;
-    }
-
-    .timer-box {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px 20px;
-      border-radius: 12px;
-      min-width: 80px;
-    }
-
-    .timer-box span {
-      font-size: 2rem;
-      font-weight: bold;
-      display: block;
-      color: var(--secondary-color);
-    }
-
-    /* Element 3: Animated Love Letter */
-    .letter-card {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 30px;
-      border-radius: 15px;
-      border-left: 4px solid var(--primary-color);
-      text-align: left;
-      position: relative;
-    }
-
-    /* Element 4: Interactive Photo Gallery Grid */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .gallery-item {
-      height: 200px;
-      border-radius: 12px;
-      background-size: cover;
-      background-position: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      display: flex;
-      align-items: flex-end;
-      padding: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-
-    .gallery-item:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 10px 25px rgba(255, 75, 114, 0.4);
-    }
-
-    .gallery-item span {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-
-    /* Element 5: Memory Timeline */
-    .timeline {
-      position: relative;
-      margin: 20px 0;
-      text-align: left;
-      width: 100%;
-    }
-
-    .timeline-item {
-      padding: 15px 20px;
-      border-left: 2px solid var(--primary-color);
-      margin-left: 20px;
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .timeline-item::before {
-      content: '❤';
-      position: absolute;
-      left: -12px;
-      top: 15px;
-      color: var(--primary-color);
-      background: var(--bg-dark);
-    }
-
-    /* Element 6: Interactive Love Meter & Surprise Button */
-    .interactive-btn {
-      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-      border: none;
-      color: white;
-      padding: 15px 35px;
-      font-size: 1.2rem;
-      border-radius: 30px;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 4px 20px rgba(255, 75, 114, 0.5);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .interactive-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 25px rgba(255, 75, 114, 0.8);
-    }
-
-    /* Animations */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.03); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 2.5rem; }
-      .timer-container { gap: 8px; }
-      .timer-box { min-width: 60px; padding: 10px; }
-      .timer-box span { font-size: 1.4rem; }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Background Particle Animation -->
-  <canvas id="particle-canvas"></canvas>
-
-  <div class="container">
-
-    <!-- Element 1: Hero Section -->
-    <section class="hero">
-      <h1>Happy Birthday, My Love ❤️</h1>
-      <p>Today is dedicated entirely to celebrating you—the brightest light in my life.</p>
-    </section>
-
-    <!-- Element 2: Love Duration Counter -->
-    <section>
-      <h2>Time Spent Together ⏳</h2>
-      <p>Every single second with you is a precious gift. We've been loving each other for:</p>
-      <div class="timer-container">
-        <div class="timer-box"><span id="days">0</span>Days</div>
-        <div class="timer-box"><span id="hours">0</span>Hours</div>
-        <div class="timer-box"><span id="minutes">0</span>Minutes</div>
-        <div class="timer-box"><span id="seconds">0</span>Seconds</div>
-      </div>
-    </section>
-
-    <!-- Element 3: Love Letter -->
-    <section>
-      <h2>A Letter For You 💌</h2>
-      <div class="letter-card">
-        <p>
-          My Dearest,<br><br>
-          From the moment you entered my life, everything became warmer, brighter, and infinitely more beautiful. 
-          Your smile instantly lifts my darkest days, and your love gives me strength I never knew I had.<br><br>
-          On your special day, I want to remind you how deeply appreciated, admired, and loved you are. May this year bring you as much boundless joy as you bring to my heart every single day.<br><br>
-          Forever & Always ❤️
-        </p>
-      </div>
-    </section>
-
-    <!-- Element 4: Photo Gallery Grid -->
-    <section>
-      <h2>Our Favorite Moments 📸</h2>
-      <p>A few snapshots of the endless memories we've shared.</p>
-      <div class="gallery-grid">
-        <div class="gallery-item" style="background-image: url('https://picsum.photos/400/400?random=1');">
-          <span>First Date ✨</span>
-        </div>
-        <div class="gallery-item" style="background-image: url('https://picsum.photos/400/400?random=2');">
-          <span>Unforgettable Trips 🌅</span>
-        </div>
-        <div class="gallery-item" style="background-image: url('https://picsum.photos/400/400?random=3');">
-          <span>Cozy Evenings ☕</span>
-        </div>
-        <div class="gallery-item" style="background-image: url('https://picsum.photos/400/400?random=4');">
-          <span>Endless Laughter 😂</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Element 5: Memory Timeline -->
-    <section>
-      <h2>Our Story 📖</h2>
-      <div class="timeline">
-        <div class="timeline-item">
-          <h3>The Day We Met</h3>
-          <p>The moment that changed my entire life for the better.</p>
-        </div>
-        <div class="timeline-item">
-          <h3>Our First Trip</h3>
-          <p>Exploring new places, holding hands, and making core memories.</p>
-        </div>
-        <div class="timeline-item">
-          <h3>Today & Always</h3>
-          <p>Celebrating another magical birthday together and looking forward to thousands more.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Element 6: Interactive Birthday Surprise -->
-    <section>
-      <h2>One Last Surprise 🎁</h2>
-      <p>Click the button below to unleash my love for you!</p>
-      <button class="interactive-btn" onclick="triggerConfetti()">Press For Love! ❤️</button>
-    </section>
-
-  </div>
-
-  <!-- JavaScript Animations and Functionality -->
-  <script>
-    /* Floating Heart Canvas Particles */
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    const particles = [];
-    class HeartParticle {
-      constructor() {
-        this.reset();
-      }
-
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 20;
-        this.size = Math.random() * 15 + 10;
-        this.speedY = Math.random() * 1.5 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.8;
-        this.opacity = Math.random() * 0.7 + 0.3;
-      }
-
-      update() {
-        this.y -= this.speedY;
-        this.x += this.speedX;
-        if (this.y < -20) this.reset();
-      }
-
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.opacity;
-        ctx.fillStyle = '#ff4b72';
-        ctx.font = `${this.size}px serif`;
-        ctx.fillText('❤️', this.x, this.y);
-        ctx.restore();
-      }
-    }
-
-    for (let i = 0; i < 30; i++) {
-      particles.push(new HeartParticle());
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    /* Relationship Time Counter */
-    // Change this date to the day you both met or started dating!
-    const startDate = new Date('2022-01-01T00:00:00');
-
-    function updateCounter() {
-      const now = new Date();
-      const diff = now - startDate;
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      document.getElementById('days').innerText = days;
-      document.getElementById('hours').innerText = hours;
-      document.getElementById('minutes').innerText = minutes;
-      document.getElementById('seconds').innerText = seconds;
-    }
-    setInterval(updateCounter, 1000);
-    updateCounter();
-
-    /* Heart Burst/Confetti Effect on Button Click */
-    function triggerConfetti() {
-      for (let i = 0; i < 40; i++) {
-        const heart = document.createElement('div');
-        heart.innerText = '💖';
-        heart.style.position = 'fixed';
-        heart.style.left = '50vw';
-        heart.style.top = '50vh';
-        heart.style.fontSize = `${Math.random() * 20 + 20}px`;
-        heart.style.pointerEvents = 'none';
-        heart.style.transition = 'all 1.5s ease-out';
-        heart.style.zIndex = '9999';
-
-        document.body.appendChild(heart);
-
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 300 + 100;
-        const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance;
-
-        setTimeout(() => {
-          heart.style.transform = `translate(${x}px, ${y}px) scale(0)`;
-          heart.style.opacity = '0';
-        }, 10);
-
-        setTimeout(() => {
-          heart.remove();
-        }, 1500);
-      }
-    }
-  </script>
-</body>
-</html>
+<!DOaCTYPE html><html lang="en"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, My Love </title>
+  <meta    name="description"    content="A magical birthday surprise made with love "  />
+  <style>    /* =========================================================       RESET    ========================================================= */
+    * {      margin: 0;      padding: 0;      box-sizing: border-box;    }
+    html {      scroll-behavior: smooth;    }
+    body {      font-family:        "Segoe UI",        system-ui,        -apple-system,        BlinkMacSystemFont,        sans-serif;
+      color: #fff;      background: #120612;      overflow-x: hidden;    }
+    a {      color: inherit;      text-decoration: none;    }
+    button {      font: inherit;    }
+    /* =========================================================       VARIABLES    ========================================================= */
+    :root {      --pink: #ff4f9a;      --hot-pink: #ff176f;      --rose: #ff758c;      --red: #ff3158;      --purple: #9d4edd;      --deep-purple: #24051f;      --cream: #fff0f6;      --gold: #ffd166;      --glass: rgba(255, 255, 255, 0.09);      --border: rgba(255, 255, 255, 0.17);      --shadow: rgba(255, 20, 120, 0.35);    }
+    /* =========================================================       CUSTOM SCROLLBAR    ========================================================= */
+    ::-webkit-scrollbar {      width: 9px;    }
+    ::-webkit-scrollbar-track {      background: #120612;    }
+    ::-webkit-scrollbar-thumb {      background: linear-gradient(        var(--pink),        var(--purple)      );      border-radius: 50px;    }
+    /* =========================================================       BACKGROUND    ========================================================= */
+    body::before {      content: "";      position: fixed;      inset: 0;
+      background:        radial-gradient(          circle at 20% 20%,          rgba(255, 65, 145, 0.2),          transparent 30%        ),        radial-gradient(          circle at 80% 30%,          rgba(159, 78, 221, 0.18),          transparent 30%        ),        radial-gradient(          circle at 50% 80%,          rgba(255, 49, 88, 0.12),          transparent 35%        );
+      pointer-events: none;      z-index: -3;    }
+    /* =========================================================       FLOATING PARTICLES    ========================================================= */
+    #particles {      position: fixed;      inset: 0;      pointer-events: none;      overflow: hidden;      z-index: 1;    }
+    .particle {      position: absolute;      bottom: -80px;      opacity: 0;      animation:        floatUp linear infinite,        sway ease-in-out infinite alternate;
+      filter: drop-shadow(        0 0 8px rgba(255, 100, 180, 0.7)      );    }
+    @keyframes floatUp {      0% {        transform: translateY(0) scale(0.5) rotate(0deg);        opacity: 0;      }
+      10% {        opacity: 0.8;      }
+      80% {        opacity: 0.7;      }
+      100% {        transform:          translateY(-115vh)          scale(1.2)          rotate(360deg);        opacity: 0;      }    }
+    @keyframes sway {      from {        margin-left: -25px;      }
+      to {        margin-left: 25px;      }    }
+    /* =========================================================       NAVIGATION    ========================================================= */
+    nav {      position: fixed;      top: 0;      left: 0;      width: 100%;
+      display: flex;      justify-content: space-between;      align-items: center;
+      padding: 18px 7%;
+      background: rgba(18, 6, 18, 0.48);      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1000;    }
+    .logo {      font-size: 1.2rem;      font-weight: 800;      color: #fff;    }
+    .logo span {      color: var(--pink);    }
+    nav ul {      display: flex;      list-style: none;      gap: 28px;    }
+    nav a {      position: relative;      color: rgba(255, 255, 255, 0.8);      transition: 0.3s;    }
+    nav a::after {      content: "";      position: absolute;      left: 0;      bottom: -7px;
+      width: 0;      height: 2px;
+      background: var(--pink);      transition: 0.3s;    }
+    nav a:hover {      color: white;    }
+    nav a:hover::after {      width: 100%;    }
+    /* =========================================================       GENERAL SECTIONS    ========================================================= */
+    section {      position: relative;      min-height: 100vh;      padding: 110px 7% 80px;
+      display: flex;      flex-direction: column;      justify-content: center;      align-items: center;
+      overflow: hidden;    }
+    .section-title {      text-align: center;      margin-bottom: 50px;      z-index: 3;    }
+    .section-title span {      color: var(--pink);    }
+    .section-title h2 {      font-size: clamp(2.2rem, 5vw, 4rem);      margin-bottom: 10px;    }
+    .section-title p {      color: rgba(255, 255, 255, 0.65);    }
+    /* =========================================================       HERO    ========================================================= */
+    #home {      min-height: 100svh;
+      background:        linear-gradient(          180deg,          rgba(20, 4, 20, 0.1),          rgba(20, 4, 20, 0.7)        );    }
+    .hero-glow {      position: absolute;      width: 500px;      height: 500px;
+      border-radius: 50%;
+      background:        radial-gradient(          circle,          rgba(255, 60, 145, 0.23),          transparent 70%        );
+      filter: blur(20px);      animation: pulseGlow 4s ease-in-out infinite;    }
+    @keyframes pulseGlow {      0%,      100% {        transform: scale(0.9);        opacity: 0.6;      }
+      50% {        transform: scale(1.2);        opacity: 1;      }    }
+    .hero-content {      position: relative;      text-align: center;      z-index: 5;      max-width: 900px;    }
+    .tiny-heart {      font-size: 2rem;      animation: heartbeat 1.3s infinite;    }
+    @keyframes heartbeat {      0%,      100% {        transform: scale(1);      }
+      15% {        transform: scale(1.25);      }
+      30% {        transform: scale(1);      }
+      45% {        transform: scale(1.18);      }    }
+    .hero-content h1 {      font-size: clamp(3.3rem, 10vw, 8rem);      line-height: 0.95;      margin: 20px 0;
+      background:        linear-gradient(          90deg,          #fff,          #ffb5d5,          #ff4f9a,          #fff        );
+      background-size: 300% auto;
+      -webkit-background-clip: text;      background-clip: text;      color: transparent;
+      animation: gradientText 5s linear infinite;    }
+    @keyframes gradientText {      to {        background-position: 300% center;      }    }
+    .hero-content h1 strong {      display: block;      color: var(--pink);    }
+    .hero-content p {      max-width: 650px;      margin: 0 auto 35px;
+      color: rgba(255, 255, 255, 0.75);      font-size: 1.1rem;      line-height: 1.8;    }
+    .hero-buttons {      display: flex;      justify-content: center;      flex-wrap: wrap;      gap: 15px;    }
+    .btn {      border: 0;      cursor: pointer;
+      padding: 14px 26px;      border-radius: 999px;
+      color: white;      font-weight: 700;
+      background:        linear-gradient(          135deg,          var(--hot-pink),          var(--purple)        );
+      box-shadow:        0 10px 35px var(--shadow);
+      transition: 0.35s;    }
+    .btn:hover {      transform: translateY(-5px) scale(1.03);
+      box-shadow:        0 18px 50px rgba(255, 45, 135, 0.5);    }
+    .btn-outline {      background: rgba(255, 255, 255, 0.06);      border: 1px solid var(--border);      box-shadow: none;    }
+    .scroll-indicator {      position: absolute;      bottom: 25px;
+      font-size: 0.8rem;      color: rgba(255, 255, 255, 0.5);
+      animation: scrollBounce 2s infinite;    }
+    @keyframes scrollBounce {      0%,      100% {        transform: translateY(0);      }
+      50% {        transform: translateY(12px);      }    }
+    /* =========================================================       LOVE LETTER    ========================================================= */
+    #letter {      background:        linear-gradient(          180deg,          #120612,          #1d071b        );    }
+    .letter {      width: min(850px, 100%);
+      padding: clamp(30px, 6vw, 70px);
+      border-radius: 30px;
+      background:        linear-gradient(          135deg,          rgba(255, 255, 255, 0.1),          rgba(255, 255, 255, 0.03)        );
+      border: 1px solid var(--border);
+      box-shadow:        0 30px 100px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(20px);
+      position: relative;      z-index: 4;
+      transform-style: preserve-3d;    }
+    .letter::before {      content: " ";
+      position: absolute;      top: 20px;      right: 30px;
+      font-size: 2rem;      color: var(--pink);
+      animation: heartbeat 1.5s infinite;    }
+    .letter h3 {      font-family: Georgia, serif;      font-size: 2rem;      color: #ffb4d2;      margin-bottom: 25px;    }
+    .letter p {      font-family: Georgia, serif;      font-size: 1.15rem;      line-height: 2;      color: rgba(255, 255, 255, 0.82);      margin-bottom: 18px;    }
+    .signature {      margin-top: 30px;      font-size: 1.5rem;      color: var(--pink);    }
+    /* =========================================================       MEMORIES    ========================================================= */
+    #memories {      background:        radial-gradient(          circle at 50% 0,          rgba(157, 78, 221, 0.14),          transparent 40%        );    }
+    .memory-grid {      width: min(1100px, 100%);
+      display: grid;      grid-template-columns:        repeat(3, 1fr);
+      gap: 25px;
+      z-index: 4;    }
+    .memory-card {      min-height: 300px;
+      padding: 28px;
+      border-radius: 28px;
+      background:        linear-gradient(          145deg,          rgba(255, 255, 255, 0.1),          rgba(255, 255, 255, 0.025)        );
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      display: flex;      flex-direction: column;      justify-content: flex-end;
+      transition:        transform 0.5s,        border 0.5s,        box-shadow 0.5s;
+      overflow: hidden;      position: relative;    }
+    .memory-card::before {      content: "";
+      position: absolute;      inset: -100%;
+      background:        linear-gradient(          120deg,          transparent,          rgba(255, 255, 255, 0.12),          transparent        );
+      transform: rotate(25deg);      transition: 0.8s;    }
+    .memory-card:hover::before {      inset: 100%;    }
+    .memory-card:hover {      transform:        translateY(-15px)        rotateX(4deg);
+      border-color:        rgba(255, 80, 160, 0.5);
+      box-shadow:        0 25px 70px rgba(255, 35, 130, 0.2);    }
+    .memory-icon {      font-size: 4rem;      margin-bottom: auto;
+      filter:        drop-shadow(          0 0 15px rgba(255, 80, 160, 0.5)        );    }
+    .memory-card h3 {      font-size: 1.4rem;      margin-bottom: 10px;    }
+    .memory-card p {      color: rgba(255, 255, 255, 0.6);      line-height: 1.6;    }
+    /* =========================================================       LOVE JOURNEY    ========================================================= */
+    #journey {      background: #170716;    }
+    .timeline {      width: min(900px, 100%);      position: relative;      z-index: 4;    }
+    .timeline::before {      content: "";
+      position: absolute;      left: 50%;      top: 0;      bottom: 0;
+      width: 2px;
+      background:        linear-gradient(          var(--pink),          var(--purple),          transparent        );    }
+    .timeline-item {      width: 50%;      padding: 20px 45px;
+      position: relative;    }
+    .timeline-item:nth-child(even) {      margin-left: 50%;    }
+    .timeline-dot {      position: absolute;
+      width: 18px;      height: 18px;
+      top: 35px;
+      background: var(--pink);
+      border-radius: 50%;
+      box-shadow:        0 0 0 7px rgba(255, 79, 154, 0.13),        0 0 25px var(--pink);    }
+    .timeline-item:nth-child(odd) .timeline-dot {      right: -9px;    }
+    .timeline-item:nth-child(even) .timeline-dot {      left: -9px;    }
+    .timeline-content {      padding: 25px;
+      background: var(--glass);
+      border: 1px solid var(--border);      border-radius: 22px;
+      backdrop-filter: blur(15px);
+      transition: 0.4s;    }
+    .timeline-content:hover {      transform: scale(1.04);      border-color: var(--pink);    }
+    .timeline-content h3 {      color: #ff8fba;      margin-bottom: 8px;    }
+    .timeline-content p {      color: rgba(255, 255, 255, 0.65);      line-height: 1.6;    }
+    /* =========================================================       CAKE    ========================================================= */
+    #cake {      background:        radial-gradient(          circle at center,          rgba(255, 50, 130, 0.13),          transparent 45%        );    }
+    .cake-wrapper {      position: relative;      margin-top: 30px;
+      display: flex;      flex-direction: column;      align-items: center;
+      z-index: 4;    }
+    .cake {      position: relative;
+      width: 280px;      height: 190px;    }
+    .cake-bottom {      position: absolute;
+      bottom: 0;      left: 10px;
+      width: 260px;      height: 90px;
+      border-radius:        20px 20px 30px 30px;
+      background:        linear-gradient(          #ff477e,          #d91f57        );
+      box-shadow:        0 25px 40px rgba(255, 30, 100, 0.25);    }
+    .cake-middle {      position: absolute;
+      bottom: 65px;      left: 30px;
+      width: 220px;      height: 70px;
+      border-radius:        20px 20px 10px 10px;
+      background:        linear-gradient(          #ff80ad,          #ff477e        );    }
+    .icing {      position: absolute;
+      bottom: 112px;      left: 25px;
+      width: 230px;      height: 35px;
+      border-radius: 20px;
+      background: #fff0f6;
+      box-shadow:        0 4px 10px rgba(255, 255, 255, 0.25);    }
+    .icing::after {      content: "";
+      position: absolute;      left: 15px;      right: 15px;      bottom: -12px;
+      height: 22px;
+      background:        radial-gradient(          circle,          #fff0f6 8px,          transparent 9px        );
+      background-size: 30px 20px;    }
+    .candle {      position: absolute;
+      bottom: 143px;
+      width: 13px;      height: 55px;
+      border-radius: 5px;
+      background:        repeating-linear-gradient(          -45deg,          #fff,          #fff 6px,          #ff5c9a 6px,          #ff5c9a 12px        );    }
+    .candle:nth-child(1) {      left: 90px;    }
+    .candle:nth-child(2) {      left: 134px;    }
+    .candle:nth-child(3) {      left: 178px;    }
+    .flame {      position: absolute;
+      width: 17px;      height: 27px;
+      left: -2px;      top: -27px;
+      border-radius:        50% 50% 50% 50%;
+      background:        linear-gradient(          #fff,          #ffd166,          #ff5b00        );
+      box-shadow:        0 0 25px #ffb300,        0 0 50px #ff4f00;
+      animation: flame 0.5s infinite alternate;    }
+    @keyframes flame {      from {        transform:          scale(0.9)          rotate(-4deg);      }
+      to {        transform:          scale(1.1)          rotate(4deg);      }    }
+    .cake-message {      margin-top: 35px;      text-align: center;    }
+    .cake-message h3 {      font-size: 2rem;      color: #ff9bc2;    }
+    .cake-message p {      margin-top: 10px;      color: rgba(255, 255, 255, 0.65);    }
+    /* =========================================================       REASONS    ========================================================= */
+    #reasons {      background: #10050f;    }
+    .reasons-grid {      width: min(1000px, 100%);
+      display: grid;      grid-template-columns:        repeat(4, 1fr);
+      gap: 18px;
+      z-index: 4;    }
+    .reason {      padding: 30px 20px;
+      text-align: center;
+      border-radius: 25px;
+      background:        rgba(255, 255, 255, 0.055);
+      border: 1px solid var(--border);
+      transition: 0.4s;    }
+    .reason:hover {      transform:        translateY(-10px)        rotate(2deg);
+      background:        rgba(255, 79, 154, 0.12);    }
+    .reason span {      display: block;      font-size: 2.5rem;      margin-bottom: 15px;    }
+    .reason p {      color: rgba(255, 255, 255, 0.7);    }
+    /* =========================================================       SURPRISE    ========================================================= */
+    #surprise {      text-align: center;
+      background:        radial-gradient(          circle,          rgba(255, 20, 110, 0.16),          transparent 50%        );    }
+    .surprise-box {      position: relative;      z-index: 4;
+      width: min(850px, 100%);
+      padding: 60px 30px;
+      border-radius: 35px;
+      background:        linear-gradient(          135deg,          rgba(255, 79, 154, 0.13),          rgba(157, 78, 221, 0.1)        );
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow:        0 30px 100px rgba(0, 0, 0, 0.3);    }
+    .surprise-box h2 {      font-size: clamp(2.5rem, 6vw, 5rem);
+      margin-bottom: 15px;
+      background:        linear-gradient(          90deg,          #fff,          #ff8fba,          #fff        );
+      -webkit-background-clip: text;      background-clip: text;      color: transparent;    }
+    .secret-message {      max-width: 650px;
+      margin: 30px auto 0;
+      font-size: 1.2rem;      line-height: 1.9;
+      color: rgba(255, 255, 255, 0.75);
+      display: none;    }
+    .secret-message.show {      display: block;      animation: revealMessage 1s ease forwards;    }
+    @keyframes revealMessage {      from {        opacity: 0;        transform: translateY(30px);        filter: blur(10px);      }
+      to {        opacity: 1;        transform: translateY(0);        filter: blur(0);      }    }
+    /* =========================================================       FOOTER    ========================================================= */
+    footer {      padding: 50px 20px;
+      text-align: center;
+      background: #080308;
+      color: rgba(255, 255, 255, 0.55);    }
+    footer strong {      color: var(--pink);    }
+    .footer-heart {      display: block;      font-size: 2rem;      margin-bottom: 10px;
+      animation: heartbeat 1.5s infinite;    }
+    /* =========================================================       REVEAL ANIMATION    ========================================================= */
+    .reveal {      opacity: 0;      transform: translateY(60px);      transition:        opacity 0.9s ease,        transform 0.9s ease;    }
+    .reveal.visible {      opacity: 1;      transform: translateY(0);    }
+    /* =========================================================       CONFETTI    ========================================================= */
+    .confetti {      position: fixed;
+      width: 9px;      height: 14px;
+      top: -20px;
+      z-index: 9999;      pointer-events: none;
+      animation:        confettiFall linear forwards,        confettiSpin linear infinite;    }
+    @keyframes confettiFall {      to {        transform:          translateY(110vh)          translateX(var(--x));      }    }
+    @keyframes confettiSpin {      from {        rotate: 0deg;      }
+      to {        rotate: 720deg;      }    }
+    /* =========================================================       RESPONSIVE    ========================================================= */
+    @media (max-width: 850px) {      nav ul {        display: none;      }
+      .memory-grid {        grid-template-columns:
