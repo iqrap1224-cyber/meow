@@ -133,55 +133,75 @@
       margin-bottom: 25px;
     }
 
-    /* Element 1: Romantic Love Coupon Box */
-    .coupon-card {
-      background: rgba(255, 133, 161, 0.1);
-      border: 1px dashed var(--pink);
-      border-radius: 16px;
-      padding: 18px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-
-    .coupon-card:hover {
-      background: rgba(255, 133, 161, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .coupon-title {
-      font-weight: bold;
-      color: var(--pink);
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .coupon-text {
-      font-size: 0.95rem;
-      color: #ffe5ec;
-      margin-top: 8px;
-      display: none;
-      font-style: italic;
-      line-height: 1.4;
-    }
-
-    /* Element 2: Kiss & Love Meter */
-    .kiss-meter-box {
+    /* Element 1: Interactive Scratch Card */
+    .scratch-card {
       background: var(--card-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 16px;
       backdrop-filter: blur(10px);
     }
 
-    .btn-kiss {
+    .scratch-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--pink);
+      margin-bottom: 10px;
+    }
+
+    .scratch-area {
+      position: relative;
+      width: 100%;
+      height: 80px;
+      border-radius: 12px;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .scratch-secret {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 133, 161, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: #ffe5ec;
+      border: 1px dashed var(--pink);
+      border-radius: 12px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .scratch-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    /* Element 2: Love Memory Capsule / Fortune Wheel */
+    .capsule-box {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-capsule {
       background: linear-gradient(45deg, #ff758f, var(--accent-color));
       border: none;
       color: white;
-      padding: 10px 22px;
+      padding: 12px 24px;
       font-size: 0.95rem;
       font-weight: bold;
       border-radius: 30px;
@@ -190,16 +210,18 @@
       transition: transform 0.2s;
     }
 
-    .btn-kiss:active {
+    .btn-capsule:active {
       transform: scale(0.95);
     }
 
-    .kiss-note {
-      margin-top: 10px;
-      font-size: 0.9rem;
+    .capsule-note {
+      margin-top: 12px;
+      font-size: 0.95rem;
       color: var(--gold);
-      min-height: 22px;
+      min-height: 24px;
       font-style: italic;
+      line-height: 1.4;
+      transition: opacity 0.3s ease;
     }
 
     /* Interactive Confetti Button */
@@ -292,20 +314,23 @@
     <!-- Cute Playing Elements & Romantic Notes -->
     <div class="play-section">
       
-      <!-- Playing Element 1: Tap to Reveal Romantic Coupon -->
-      <div class="coupon-card" onclick="revealCoupon(this)">
-        <div class="coupon-title">🎟️ Tap to Unlock Your Lifetime Birthday Coupon!</div>
-        <div class="coupon-text">
-          "Redeemable for 1,000 warm hugs, late-night ice cream runs, and unconditional love forever. No expiration date! ❤️"
+      <!-- New Unique Element 1: Romantic Scratch Card -->
+      <div class="scratch-card">
+        <div class="scratch-title">✨ Scratch off to reveal a secret love note! ✨</div>
+        <div class="scratch-area" id="scratchContainer">
+          <div class="scratch-secret">
+            "Out of all the people in the world, my favorite place is right beside you. Happy Birthday, my happiness! 💕"
+          </div>
+          <canvas id="scratchCanvas" class="scratch-canvas"></canvas>
         </div>
       </div>
 
-      <!-- Playing Element 2: Kiss Counter & Random Romantic Notes -->
-      <div class="kiss-meter-box">
-        <button class="btn-kiss" onclick="sendKiss(event)">
-          💋 Send Virtual Kisses (<span id="kissCount">0</span>)
+      <!-- New Unique Element 2: Romantic Time Capsule / Memory Pop -->
+      <div class="capsule-box">
+        <button class="btn-capsule" onclick="popMemory(event)">
+          💌 Pop a Romantic Memory Capsule
         </button>
-        <div class="kiss-note" id="kissNote">Tap the button to shower love!</div>
+        <div class="capsule-note" id="capsuleNote">Click to unlock a favorite thought about you...</div>
       </div>
 
     </div>
@@ -341,41 +366,90 @@
       }
     }
 
-    /* Playing Element 1: Reveal Coupon Note */
-    function revealCoupon(element) {
-      const text = element.querySelector('.coupon-text');
-      if (text.style.display === 'block') {
-        text.style.display = 'none';
-      } else {
-        text.style.display = 'block';
+    /* Scratch Card Implementation */
+    const canvas = document.getElementById('scratchCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let scratched = false;
+
+    function initScratch() {
+      const rect = canvas.parentNode.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      // Fill canvas with gold/pink scratch layer
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, '#ffd700');
+      grad.addColorStop(0.5, '#ff85a1');
+      grad.addColorStop(1, '#ff3366');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Add scratch texture pattern
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      for(let i=0; i<30; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*20, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText('Scratch with your finger/mouse 🪙', canvas.width / 2, canvas.height / 2 + 5);
+    }
+
+    function scratch(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+      const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (!scratched) {
+        scratched = true;
         confetti({ particleCount: 25, spread: 50, origin: { y: 0.7 } });
       }
     }
 
-    /* Playing Element 2: Send Kiss & Show Romantic Notes */
-    let kissCount = 0;
-    const romanticNotes = [
-      "You make my heart skip a beat every day! 💓",
-      "Loving you is my absolute favorite thing to do! ✨",
-      "You're the sweetest part of my life! 🍬",
-      "Sending you a giant hug right now! 🤗",
-      "My heart belongs to you, today and forever! 💖"
+    canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+    canvas.addEventListener('mousemove', scratch);
+    window.addEventListener('mouseup', () => { isDrawing = false; });
+
+    canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
+    canvas.addEventListener('touchmove', scratch);
+    window.addEventListener('touchend', () => { isDrawing = false; });
+
+    window.onload = initScratch;
+
+    /* Element 2: Romantic Capsule / Thought Generator */
+    const romanticCapsules = [
+      "Remembering the first time we talked... I knew right then you were special ✨",
+      "Your smile is literally the prettiest thing I get to see every single day ❤️",
+      "I love how comfortable and happy I feel whenever I am with you 🌸",
+      "Every song I listen to lately reminds me of you and your laughter 🎵",
+      "Thank you for being my constant comfort, my best friend, and my love 💖"
     ];
 
-    function sendKiss(e) {
+    function popMemory(e) {
       e.stopPropagation();
-      kissCount++;
-      document.getElementById('kissCount').innerText = kissCount;
+      const noteElem = document.getElementById('capsuleNote');
+      const randomNote = romanticCapsules[Math.floor(Math.random() * romanticCapsules.length)];
+      
+      noteElem.style.opacity = 0;
+      setTimeout(() => {
+        noteElem.innerText = randomNote;
+        noteElem.style.opacity = 1;
+      }, 200);
 
-      // Random romantic note trigger
-      const randomNote = romanticNotes[Math.floor(Math.random() * romanticNotes.length)];
-      document.getElementById('kissNote').innerText = randomNote;
-
-      // Burst small hearts confetti
       confetti({
-        particleCount: 15,
-        spread: 40,
-        origin: { y: 0.7 },
+        particleCount: 18,
+        spread: 45,
+        origin: { y: 0.75 },
         colors: ['#ff3366', '#ff85a1', '#ffd700']
       });
     }
@@ -417,7 +491,7 @@
       document.getElementById('hours').innerText = String(hours).padStart(2, '0');
       document.getElementById('mins').innerText = String(mins).padStart(2, '0');
       document.getElementById('secs').innerText = String(secs).padStart(2, '0');
-    }
+    }a
 
     setInterval(updateTimer, 1000);
     updateTimer();
